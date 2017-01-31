@@ -1,10 +1,31 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Media;
 
 namespace Fasetto.Word
 {
+    /// <summary>
+    /// The dock position of the window
+    /// </summary>
+    public enum WindowDockPosition
+    {
+        /// <summary>
+        /// Not docked
+        /// </summary>
+        Undocked,
+        /// <summary>
+        /// Docked to the left of the screen
+        /// </summary>
+        Left,
+        /// <summary>
+        /// Docked to the right of the screen
+        /// </summary>
+        Right,
+    }
+
     /// <summary>
     /// Fixes the issue with Windows of Style <see cref="WindowStyle.None"/> covering the taskbar
     /// </summary>
@@ -16,6 +37,31 @@ namespace Fasetto.Word
         /// The window to handle the resizing for
         /// </summary>
         private Window mWindow;
+
+        /// <summary>
+        /// The last calculated available screen size
+        /// </summary>
+        private Rect mScreenSize = new Rect();
+
+        /// <summary>
+        /// How close to the edge the window has to be to be detected as at the edge of the screen
+        /// </summary>
+        private int mEdgeTolerance = 2;
+
+        /// <summary>
+        /// The transform matrix used to convert WPF sizes to screen pixels
+        /// </summary>
+        private Matrix mTransformToDevice;
+
+        /// <summary>
+        /// The last screen the window was on
+        /// </summary>
+        private IntPtr mLastScreen;
+
+        /// <summary>
+        /// The last known dock position
+        /// </summary>
+        private WindowDockPosition mLastDock = WindowDockPosition.Undocked;
 
         #endregion
 
@@ -33,6 +79,15 @@ namespace Fasetto.Word
 
         #endregion
 
+        #region Public Events
+
+        /// <summary>
+        /// Called when the window dock position changes
+        /// </summary>
+        public event Action<WindowDockPosition> WindowDockChanged = (dock) => { };
+
+        #endregion
+
         #region Constructor
 
         /// <summary>
@@ -44,13 +99,38 @@ namespace Fasetto.Word
         {
             mWindow = window;
 
+            // Create transform visual (for converting WPF size to pixel size)
+            GetTransform();
+
             // Listen out for source initialized to setup
             mWindow.SourceInitialized += Window_SourceInitialized;
+
+            // Monitor for edge docking
+            mWindow.SizeChanged += Window_SizeChanged;
         }
 
         #endregion
 
         #region Initialize
+
+        /// <summary>
+        /// Gets the transform object used to convert WPF sizes to screen pixels
+        /// </summary>
+        private void GetTransform()
+        {
+            // Get the visual source
+            var source = PresentationSource.FromVisual(mWindow);
+
+            // Reset the transform to default
+            mTransformToDevice = default(Matrix);
+
+            // If we cannot get the source, ignore
+            if (source == null)
+                return;
+
+            // Otherwise, get the new transform object
+            mTransformToDevice = source.CompositionTarget.TransformToDevice;
+        }
 
         /// <summary>
         /// Initialize and hook into the windows message pump
@@ -69,6 +149,61 @@ namespace Fasetto.Word
 
             // Hook into it's Windows messages
             handleSource.AddHook(WindowProc);
+        }
+
+        #endregion
+
+        #region Edge Docking
+
+        /// <summary>
+        /// Monitors for size changes and detects if the window has been docked (Aero snap) to an edge
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // We cannot find positioning until the window transform has been established
+            if (mTransformToDevice == default(Matrix))
+                return;
+
+            // Get the WPF size
+            var size = e.NewSize;
+
+            // Get window rectangle
+            var top = mWindow.Top;
+            var left = mWindow.Left;
+            var bottom = top + size.Height;
+            var right = left + mWindow.Width;
+
+            // Get window position/size in device pixels
+            var windowTopLeft = mTransformToDevice.Transform(new Point(left, top));
+            var windowBottomRight = mTransformToDevice.Transform(new Point(right, bottom));
+
+            // Check for edges docked
+            var edgedTop = windowTopLeft.Y <= (mScreenSize.Top + mEdgeTolerance);
+            var edgedLeft = windowTopLeft.X <= (mScreenSize.Left + mEdgeTolerance);
+            var edgedBottom = windowBottomRight.Y >= (mScreenSize.Bottom - mEdgeTolerance);
+            var edgedRight = windowBottomRight.X >= (mScreenSize.Right - mEdgeTolerance);
+
+            // Get docked position
+            var dock = WindowDockPosition.Undocked;
+
+            // Left docking
+            if (edgedTop && edgedBottom && edgedLeft)
+                dock = WindowDockPosition.Left;
+            else if (edgedTop && edgedBottom && edgedRight)
+                dock = WindowDockPosition.Right;
+            // None
+            else
+                dock = WindowDockPosition.Undocked;
+
+            // If dock has changed
+            if (dock != mLastDock)
+                // Inform listeners
+                WindowDockChanged(dock);
+
+            // Save last dock position
+            mLastDock = dock;
         }
 
         #endregion
@@ -108,20 +243,32 @@ namespace Fasetto.Word
         /// <param name="lParam"></param>
         private void WmGetMinMaxInfo(System.IntPtr hwnd, System.IntPtr lParam)
         {
+            // Get the point position to determine what screen we are on
             POINT lMousePosition;
             GetCursorPos(out lMousePosition);
 
-            IntPtr lPrimaryScreen = MonitorFromPoint(new POINT(0, 0), MonitorOptions.MONITOR_DEFAULTTOPRIMARY);
-            MONITORINFO lPrimaryScreenInfo = new MONITORINFO();
+            // Get the primary monitor at cursor position 0,0
+            var lPrimaryScreen = MonitorFromPoint(new POINT(0, 0), MonitorOptions.MONITOR_DEFAULTTOPRIMARY);
+
+            // Try and get the primary screen information
+            var lPrimaryScreenInfo = new MONITORINFO();
             if (GetMonitorInfo(lPrimaryScreen, lPrimaryScreenInfo) == false)
-            {
                 return;
-            }
 
-            IntPtr lCurrentScreen = MonitorFromPoint(lMousePosition, MonitorOptions.MONITOR_DEFAULTTONEAREST);
+            // Now get the current screen
+            var lCurrentScreen = MonitorFromPoint(lMousePosition, MonitorOptions.MONITOR_DEFAULTTONEAREST);
 
-            MINMAXINFO lMmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO));
+            // If this has changed from the last one, update the transform
+            if (lCurrentScreen != mLastScreen || mTransformToDevice == default(Matrix))
+                GetTransform();
 
+            // Store last know screen
+            mLastScreen = lCurrentScreen;
+
+            // Get min/max structure to fill with information
+            var lMmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO));
+
+            // If it is the primary screen, use the rcWork variable
             if (lPrimaryScreen.Equals(lCurrentScreen) == true)
             {
                 lMmi.ptMaxPosition.X = lPrimaryScreenInfo.rcWork.Left;
@@ -129,6 +276,7 @@ namespace Fasetto.Word
                 lMmi.ptMaxSize.X = lPrimaryScreenInfo.rcWork.Right - lPrimaryScreenInfo.rcWork.Left;
                 lMmi.ptMaxSize.Y = lPrimaryScreenInfo.rcWork.Bottom - lPrimaryScreenInfo.rcWork.Top;
             }
+            // Otherwise it's the rcMonitor values
             else
             {
                 lMmi.ptMaxPosition.X = lPrimaryScreenInfo.rcMonitor.Left;
@@ -136,6 +284,15 @@ namespace Fasetto.Word
                 lMmi.ptMaxSize.X = lPrimaryScreenInfo.rcMonitor.Right - lPrimaryScreenInfo.rcMonitor.Left;
                 lMmi.ptMaxSize.Y = lPrimaryScreenInfo.rcMonitor.Bottom - lPrimaryScreenInfo.rcMonitor.Top;
             }
+
+            // Set min size
+            var minSize = mTransformToDevice.Transform(new Point(mWindow.MinWidth, mWindow.MinHeight));
+
+            lMmi.ptMinTrackSize.X = (int)minSize.X;
+            lMmi.ptMinTrackSize.Y = (int)minSize.Y;
+
+            // Store new size
+            mScreenSize = new Rect(lMmi.ptMaxPosition.X, lMmi.ptMaxPosition.Y, lMmi.ptMaxSize.X, lMmi.ptMaxSize.Y);
 
             // Now we have the max size, allow the host to tweak as needed
             Marshal.StructureToPtr(lMmi, lParam, true);
