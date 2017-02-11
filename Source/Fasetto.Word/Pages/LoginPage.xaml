@@ -8,12 +8,8 @@
       d:DesignHeight="700" d:DesignWidth="700"
       Title="LoginPage">
 
-    <Border Background="{StaticResource WordBlueBrush}">
+    <Border>
         <Grid>
-            <!-- Blue background image -->
-            <Grid.Background>
-                <ImageBrush TileMode="Tile" ViewportUnits="Absolute" Viewport="0 0 500 500" ImageSource="/Images/Backgrounds/emoji-background.png" />
-            </Grid.Background>
 
             <!-- Main content scroll -->
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
