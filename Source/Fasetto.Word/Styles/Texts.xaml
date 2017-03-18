@@ -129,4 +129,39 @@
 
     </Style>
 
+    <Style TargetType="{x:Type TextBlock}" x:Key="SpinningText" BasedOn="{StaticResource BaseTextBlockStyle}">
+
+        <Setter Property="FontFamily" Value="{StaticResource FontAwesome}" />
+        <Setter Property="Text" Value="&#xf110;" />
+        <Setter Property="RenderTransformOrigin" Value="0.5, 0.5" />
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <RotateTransform></RotateTransform>
+            </Setter.Value>
+        </Setter>
+        
+        <Style.Resources>
+            <Storyboard x:Key="Spin">
+                <DoubleAnimation
+                    Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                    From="0"
+                    To="360"
+                    Duration="0:0:2"
+                    RepeatBehavior="Forever" />
+            </Storyboard>
+        </Style.Resources>
+
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=IsVisible}" Value="True">
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard Name="SpinStoryboard" Storyboard="{StaticResource Spin}" />
+                </DataTrigger.EnterActions>
+                <DataTrigger.ExitActions>
+                    <RemoveStoryboard BeginStoryboardName="SpinStoryboard" />
+                </DataTrigger.ExitActions>
+            </DataTrigger>
+        </Style.Triggers>
+
+    </Style>
+    
 </ResourceDictionary>
