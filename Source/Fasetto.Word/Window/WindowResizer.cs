@@ -88,6 +88,15 @@ namespace Fasetto.Word
 
         #endregion
 
+        #region Public Properties
+
+        /// <summary>
+        /// The size and position of the current monitor the window is on
+        /// </summary>
+        public Rectangle CurrentMonitorSize { get; set; } = new Rectangle();
+
+        #endregion
+
         #region Constructor
 
         /// <summary>
@@ -284,6 +293,9 @@ namespace Fasetto.Word
                 lMmi.ptMaxSize.X = lPrimaryScreenInfo.rcMonitor.Right - lPrimaryScreenInfo.rcMonitor.Left;
                 lMmi.ptMaxSize.Y = lPrimaryScreenInfo.rcMonitor.Bottom - lPrimaryScreenInfo.rcMonitor.Top;
             }
+
+            // Set monitor size
+            CurrentMonitorSize = new Rectangle(lMmi.ptMaxPosition.X, lMmi.ptMaxPosition.Y, lMmi.ptMaxSize.X + lMmi.ptMaxPosition.X, lMmi.ptMaxSize.Y + lMmi.ptMaxPosition.Y);
 
             // Set min size
             var minSize = mTransformToDevice.Transform(new Point(mWindow.MinWidth, mWindow.MinHeight));
