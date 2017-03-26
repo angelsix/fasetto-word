@@ -1,0 +1,18 @@
+# Setup
+title:        Fasetto Word
+tagline:      The new chat application for Fasetto, completely open-source :)
+baseurl:      ""
+repository: angelsix/fasetto-word
+
+theme: jekyll-theme-cayman
+
+# About/contact
+author:
+  name:       Luke Malpass
+  url:        http://angelsix.com 
+
+# Gems
+gems:
+
+#Others
+markdown: kramdown
