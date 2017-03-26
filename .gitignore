@@ -10,6 +10,12 @@ project.lock.json
 
 node_modules/
 
+.sass-cache/
+
+# Jekyll
+docs/_site
+[Gg]emfile.lock
+
 # Build results
 
 .vs/
