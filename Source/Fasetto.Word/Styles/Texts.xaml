@@ -18,6 +18,9 @@
         <Setter Property="BorderBrush" Value="{StaticResource WordBlueBrush}" />
         <Setter Property="BorderThickness" Value="0 0 0 1" />
 
+        <Setter Property="Background" Value="{StaticResource ForegroundLightBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource ForegroundVeryDarkBrush}" />
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBoxBase}">
@@ -81,6 +84,9 @@
         <Setter Property="Margin" Value="0 5 0 5" />
         <Setter Property="BorderBrush" Value="{StaticResource WordBlueBrush}" />
         <Setter Property="BorderThickness" Value="0 0 0 1" />
+
+        <Setter Property="Background" Value="{StaticResource ForegroundLightBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource ForegroundVeryDarkBrush}" />
 
         <Setter Property="local:MonitorPasswordProperty.Value" Value="True" />
 

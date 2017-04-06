@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Fasetto.Word"
+        xmlns:core="clr-namespace:Fasetto.Word.Core;assembly=Fasetto.Word.Core"
         mc:Ignorable="d"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -130,7 +131,12 @@
                 <ImageBrush TileMode="Tile" ViewportUnits="Absolute" Viewport="0 0 500 500" ImageSource="/Images/Backgrounds/emoji-background.png" />
             </Grid.Background>
 
-            <Frame Grid.Column="1" x:Name="MainFrame" Content="{Binding CurrentPage, Converter={local:ApplicationPageValueConverter}}" Background="Transparent" />
+            <Frame Grid.Column="1" 
+                   x:Name="MainFrame" 
+                   Content="{Binding ApplicationViewModel.CurrentPage, 
+                                     Source={x:Static local:ViewModelLocator.Instance},  
+                                     Converter={local:ApplicationPageValueConverter}}"
+                   Background="Transparent" />
             
             <!-- Side Menu -->
             <local:SideMenuControl>

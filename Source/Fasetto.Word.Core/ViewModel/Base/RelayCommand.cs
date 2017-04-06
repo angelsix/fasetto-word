@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace Fasetto.Word
+namespace Fasetto.Word.Core
 {
     /// <summary>
     /// A basic command that runs an Action
     /// </summary>
-    public class RelayParameterizedCommand : ICommand
+    public class RelayCommand : ICommand
     {
         #region Private Members
 
         /// <summary>
         /// The action to run
         /// </summary>
-        private Action<object> mAction;
+        private Action mAction;
 
         #endregion
 
@@ -31,7 +31,7 @@ namespace Fasetto.Word
         /// <summary>
         /// Default constructor
         /// </summary>
-        public RelayParameterizedCommand(Action<object> action)
+        public RelayCommand(Action action)
         {
             mAction = action;
         }
@@ -56,7 +56,7 @@ namespace Fasetto.Word
         /// <param name="parameter"></param>
         public void Execute(object parameter)
         {
-            mAction(parameter);
+            mAction();
         }
 
         #endregion
