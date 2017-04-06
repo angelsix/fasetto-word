@@ -133,7 +133,9 @@
 
             <Frame Grid.Column="1" 
                    x:Name="MainFrame" 
-                   Content="{Binding ApplicationViewModel.CurrentPage, ElementName=AppWindow, Converter={local:ApplicationPageValueConverter}}"
+                   Content="{Binding ApplicationViewModel.CurrentPage, 
+                                     Source={x:Static local:ViewModelLocator.Instance},  
+                                     Converter={local:ApplicationPageValueConverter}}"
                    Background="Transparent" />
             
             <!-- Side Menu -->
