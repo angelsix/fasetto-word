@@ -16,7 +16,7 @@ namespace Fasetto.Word
         /// <param name="page">The page to animate</param>
         /// <param name="seconds">The time the animation will take</param>
         /// <returns></returns>
-        public static async Task SlideAndFadeInFromRight(this Page page, float seconds)
+        public static async Task SlideAndFadeInFromRightAsync(this Page page, float seconds)
         {
             // Create the storyboard
             var sb = new Storyboard();
@@ -43,7 +43,7 @@ namespace Fasetto.Word
         /// <param name="page">The page to animate</param>
         /// <param name="seconds">The time the animation will take</param>
         /// <returns></returns>
-        public static async Task SlideAndFadeOutToLeft(this Page page, float seconds)
+        public static async Task SlideAndFadeOutToLeftAsync(this Page page, float seconds)
         {
             // Create the storyboard
             var sb = new Storyboard();

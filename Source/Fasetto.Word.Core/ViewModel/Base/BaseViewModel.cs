@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace Fasetto.Word
+namespace Fasetto.Word.Core
 {
     /// <summary>
     /// A base view model that fires Property Changed events as needed
@@ -37,7 +37,7 @@ namespace Fasetto.Word
         /// <param name="updatingFlag">The boolean property flag defining if the command is already running</param>
         /// <param name="action">The action to run if the command is not already running</param>
         /// <returns></returns>
-        protected async Task RunCommand(Expression<Func<bool>> updatingFlag, Func<Task> action)
+        protected async Task RunCommandAsync(Expression<Func<bool>> updatingFlag, Func<Task> action)
         {
             // Check if the flag property is true (meaning the function is already running)
             if (updatingFlag.GetPropertyValue())
