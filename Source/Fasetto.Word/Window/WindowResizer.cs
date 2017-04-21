@@ -46,7 +46,7 @@ namespace Fasetto.Word
         /// <summary>
         /// How close to the edge the window has to be to be detected as at the edge of the screen
         /// </summary>
-        private int mEdgeTolerance = 2;
+        private int mEdgeTolerance = 8;
 
         /// <summary>
         /// The transform matrix used to convert WPF sizes to screen pixels
@@ -255,16 +255,13 @@ namespace Fasetto.Word
             // Get the point position to determine what screen we are on
             GetCursorPos(out POINT lMousePosition);
             
-            // Get the primary monitor at cursor position 0,0
-            var lPrimaryScreen = MonitorFromPoint(new POINT(0, 0), MonitorOptions.MONITOR_DEFAULTTOPRIMARY);
-
-            // Try and get the primary screen information
-            var lPrimaryScreenInfo = new MONITORINFO();
-            if (GetMonitorInfo(lPrimaryScreen, lPrimaryScreenInfo) == false)
-                return;
-
             // Now get the current screen
             var lCurrentScreen = MonitorFromPoint(lMousePosition, MonitorOptions.MONITOR_DEFAULTTONEAREST);
+
+            // Try and get the current screen information
+            var lCurrentScreenInfo = new MONITORINFO();
+            if (GetMonitorInfo(lCurrentScreen, lCurrentScreenInfo) == false)
+                return;
 
             // If this has changed from the last one, update the transform
             if (lCurrentScreen != mLastScreen || mTransformToDevice == default(Matrix))
@@ -276,29 +273,17 @@ namespace Fasetto.Word
             // Get min/max structure to fill with information
             var lMmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO));
 
-            // If it is the primary screen, use the rcWork variable
-            if (lPrimaryScreen.Equals(lCurrentScreen) == true)
-            {
-                lMmi.ptMaxPosition.X = lPrimaryScreenInfo.rcWork.Left;
-                lMmi.ptMaxPosition.Y = lPrimaryScreenInfo.rcWork.Top;
-                lMmi.ptMaxSize.X = lPrimaryScreenInfo.rcWork.Right - lPrimaryScreenInfo.rcWork.Left;
-                lMmi.ptMaxSize.Y = lPrimaryScreenInfo.rcWork.Bottom - lPrimaryScreenInfo.rcWork.Top;
-            }
-            // Otherwise it's the rcMonitor values
-            else
-            {
-                lMmi.ptMaxPosition.X = lPrimaryScreenInfo.rcMonitor.Left;
-                lMmi.ptMaxPosition.Y = lPrimaryScreenInfo.rcMonitor.Top;
-                lMmi.ptMaxSize.X = lPrimaryScreenInfo.rcMonitor.Right - lPrimaryScreenInfo.rcMonitor.Left;
-                lMmi.ptMaxSize.Y = lPrimaryScreenInfo.rcMonitor.Bottom - lPrimaryScreenInfo.rcMonitor.Top;
-            }
+            // Size size limits, relative to 0,0 being the current screens top-left corner
+            lMmi.ptMaxPosition.X = 0;
+            lMmi.ptMaxPosition.Y = 0;
+            lMmi.ptMaxSize.X = lCurrentScreenInfo.rcWork.Right - lCurrentScreenInfo.rcWork.Left;
+            lMmi.ptMaxSize.Y = lCurrentScreenInfo.rcWork.Bottom - lCurrentScreenInfo.rcWork.Top;
 
             // Set monitor size
             CurrentMonitorSize = new Rectangle(lMmi.ptMaxPosition.X, lMmi.ptMaxPosition.Y, lMmi.ptMaxSize.X + lMmi.ptMaxPosition.X, lMmi.ptMaxSize.Y + lMmi.ptMaxPosition.Y);
 
             // Set min size
             var minSize = mTransformToDevice.Transform(new Point(mWindow.MinWidth, mWindow.MinHeight));
-
             lMmi.ptMinTrackSize.X = (int)minSize.X;
             lMmi.ptMinTrackSize.Y = (int)minSize.Y;
 
