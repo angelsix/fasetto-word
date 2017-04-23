@@ -14,11 +14,25 @@ namespace Fasetto.Word.Core
         /// <summary>
         /// The current page of the application
         /// </summary>
-        public ApplicationPage CurrentPage { get; set; } = ApplicationPage.Login;
+        public ApplicationPage CurrentPage { get; private set; } = ApplicationPage.Login;
 
         /// <summary>
         /// True if the side menu should be shown
         /// </summary>
         public bool SideMenuVisible { get; set; } = false;
+
+        /// <summary>
+        /// Navigates to the specified page
+        /// </summary>
+        /// <param name="page">The page to go to</param>
+        public void GoToPage(ApplicationPage page)
+        {
+            // Set the current page
+            CurrentPage = page;
+
+            // Show side menu or not?
+            SideMenuVisible = page == ApplicationPage.Chat;
+
+        }
     }
 }
