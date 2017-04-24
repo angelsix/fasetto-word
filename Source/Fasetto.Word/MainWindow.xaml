@@ -6,6 +6,8 @@
         xmlns:local="clr-namespace:Fasetto.Word"
         xmlns:core="clr-namespace:Fasetto.Word.Core;assembly=Fasetto.Word.Core"
         mc:Ignorable="d"
+        WindowStyle="None"
+        AllowsTransparency="True"
         WindowStartupLocation="CenterScreen"
         x:Name="AppWindow"
         Icon="Images/Logo/logo-small.png"
