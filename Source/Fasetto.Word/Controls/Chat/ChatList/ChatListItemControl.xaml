@@ -6,8 +6,7 @@
              xmlns:local="clr-namespace:Fasetto.Word"
              xmlns:core="clr-namespace:Fasetto.Word.Core;assembly=Fasetto.Word.Core"
              mc:Ignorable="d" 
-             Height="60"
-             d:DesignHeight="60" d:DesignWidth="300">
+             d:DesignWidth="300">
 
     <UserControl.Resources>
         <Style x:Key="ContentStyle" TargetType="{x:Type ContentControl}">
@@ -34,9 +33,12 @@
                                     />
 
                             <!-- Profile picture padding -->
-                            <Border Grid.Column="0" Padding="8">
+                            <Border Grid.Column="0" 
+                                    Padding="8 15"
+                                    >
                                 <!-- Profile picture background -->
                                 <Border Background="{Binding ProfilePictureRGB, Converter={local:StringRGBToBrushConverter}}" 
+                                        Height="40"
                                         Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
                                         CornerRadius="{Binding ActualHeight, RelativeSource={RelativeSource Self}}">
                                     <!-- Profile picture initials -->
@@ -44,7 +46,7 @@
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Center"
                                                Foreground="{StaticResource ForegroundLightBrush}"
-                                               FontSize="{StaticResource FontSizeAverage}"
+                                               FontSize="{StaticResource FontSizeLarge}"
                                                FontFamily="{StaticResource LatoRegular}"
                                                />           
                                 </Border>
@@ -55,12 +57,14 @@
                                 <StackPanel VerticalAlignment="Center">
                                     <!-- Name-->
                                     <TextBlock Text="{Binding Name}"
+                                                Padding="0 0 0 2"
                                                 Foreground="{StaticResource WordBlueBrush}"
                                                 TextTrimming="CharacterEllipsis"
                                                 FontFamily="{StaticResource LatoRegular}"
                                                 />
                                     <!-- Message -->
                                     <TextBlock Text="{Binding Message}"
+                                               Padding="0 2 0 0"
                                                Foreground="{StaticResource ForegroundDarkBrush}"
                                                TextTrimming="CharacterEllipsis"
                                                FontFamily="{StaticResource LatoRegular}"
