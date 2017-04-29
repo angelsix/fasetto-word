@@ -1,0 +1,75 @@
+﻿<UserControl x:Class="Fasetto.Word.ChatMessageListItemControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Fasetto.Word"
+             mc:Ignorable="d" d:DesignWidth="300">
+    <Border Padding="5" Background="{StaticResource WordBlueBrush}">
+        <Grid>
+
+            <!-- Profile picture -->
+            <Border VerticalAlignment="Top"
+                    HorizontalAlignment="Left"
+                    Margin="0 7.5 0 7.5"
+                    CornerRadius="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
+                    Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
+                    Width="35"
+                    Background="Green"
+                    BorderBrush="{StaticResource ForegroundLightBrush}"
+                    BorderThickness="1"
+                    >
+                <TextBlock Text="LM"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Foreground="{StaticResource ForegroundLightBrush}"
+                           FontFamily="{StaticResource LatoRegular}"
+                           />
+            </Border>
+
+            <!-- Chat message container -->
+            <Grid Margin="25 0 0 0" HorizontalAlignment="Left">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                
+                <!-- Speech bubble rectangle -->
+                <Border CornerRadius="10"
+                    Padding="15"
+                    Background="{StaticResource ForegroundLightBrush}"
+                    >
+
+                    <!-- Message text -->
+                    <TextBlock VerticalAlignment="Center"
+                           TextWrapping="Wrap"
+                           FontFamily="{StaticResource LatoRegular}"
+                           Foreground="{StaticResource WordDarkBlueBrush}"
+                           Text="This chat app is awesome! When is it coming out? I want it NOW!"
+                           />
+
+                </Border>
+
+                <!-- Chat bubble anchor -->
+                <Path Grid.Row="1" 
+                      Stroke="Black"
+                      Panel.ZIndex="1"
+                      Margin="15 -1 15 0"
+                      Data="M 0,0 L 10,10 L 20,0 L 0,0" 
+                      StrokeThickness="0"
+                      Fill="{StaticResource ForegroundLightBrush}" />
+
+                <TextBlock Grid.Row="2"
+                           Text="11:54am"
+                           Foreground="{StaticResource ForegroundLightBrush}"
+                           HorizontalAlignment="Right"
+                           FontSize="{StaticResource FontSizeSmall}"
+                           />
+
+            </Grid>
+
+        </Grid>
+    </Border>
+</UserControl>
