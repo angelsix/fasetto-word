@@ -20,7 +20,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Window}">
-                        <!-- Outer border with the dropshadow margin -->
+                        <!-- Outer border with the drop shadow margin -->
                         <Border Padding="{Binding OuterMarginSizeThickness, FallbackValue=10}">
                             
                             <!-- Main window outline -->
@@ -31,7 +31,7 @@
                                         Background="{StaticResource BackgroundLightBrush}"
                                         CornerRadius="{Binding WindowCornerRadius, FallbackValue=10}" />
 
-                                <!-- Window border and dropshadown -->
+                                <!-- Window border and drop shadow -->
                                 <Border CornerRadius="{Binding WindowCornerRadius, FallbackValue=10}"
                                     Background="{StaticResource ForegroundLightBrush}">
                                     <Border.Effect>
