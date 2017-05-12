@@ -137,7 +137,7 @@
                                      Source={x:Static local:ViewModelLocator.Instance},  
                                      Converter={local:ApplicationPageValueConverter}}"
                    CurrentPage="{Binding}" />
-            
+
             <!-- Side Menu -->
             <local:SideMenuControl 
                 Width="300" 
