@@ -170,6 +170,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Styles\Scroll.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Styles\Texts.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
