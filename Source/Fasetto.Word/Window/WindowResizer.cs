@@ -254,8 +254,8 @@ namespace Fasetto.Word
             var lMmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO));
 
             // Size size limits, relative to 0,0 being the current screens top-left corner
-            lMmi.ptMaxPosition.X = 0;
-            lMmi.ptMaxPosition.Y = 0;
+            lMmi.ptMaxPosition.X = lCurrentScreenInfo.rcWork.Left;
+            lMmi.ptMaxPosition.Y = lCurrentScreenInfo.rcWork.Top;
             lMmi.ptMaxSize.X = lCurrentScreenInfo.rcWork.Right - lCurrentScreenInfo.rcWork.Left;
             lMmi.ptMaxSize.Y = lCurrentScreenInfo.rcWork.Bottom - lCurrentScreenInfo.rcWork.Top;
 
