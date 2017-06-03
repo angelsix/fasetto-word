@@ -299,8 +299,8 @@ namespace Fasetto.Word
             var lMmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO));
 
             // Size size limits, relative to 0,0 being the current screens top-left corner
-            lMmi.ptMaxPosition.X = lCurrentScreenInfo.rcWork.Left;
-            lMmi.ptMaxPosition.Y = lCurrentScreenInfo.rcWork.Top;
+            lMmi.ptMaxPosition.X = lCurrentScreenInfo.rcWork.Left - lCurrentScreenInfo.rcMonitor.Left;
+            lMmi.ptMaxPosition.Y = lCurrentScreenInfo.rcWork.Top - lCurrentScreenInfo.rcMonitor.Top;
             lMmi.ptMaxSize.X = lCurrentScreenInfo.rcWork.Right - lCurrentScreenInfo.rcWork.Left;
             lMmi.ptMaxSize.Y = lCurrentScreenInfo.rcWork.Bottom - lCurrentScreenInfo.rcWork.Top;
 
@@ -313,7 +313,7 @@ namespace Fasetto.Word
             lMmi.ptMinTrackSize.Y = (int)minSize.Y;
 
             // Store new size
-            mScreenSize = new Rect(lMmi.ptMaxPosition.X, lMmi.ptMaxPosition.Y, lMmi.ptMaxSize.X, lMmi.ptMaxSize.Y);
+            mScreenSize = new Rect(lCurrentScreenInfo.rcWork.Left, lCurrentScreenInfo.rcWork.Top, lMmi.ptMaxSize.X, lMmi.ptMaxSize.Y);
 
             // Now we have the max size, allow the host to tweak as needed
             Marshal.StructureToPtr(lMmi, lParam, true);
