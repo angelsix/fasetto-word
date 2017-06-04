@@ -279,13 +279,19 @@ namespace Fasetto.Word
         {
             // Get the point position to determine what screen we are on
             GetCursorPos(out POINT lMousePosition);
-            
+
             // Now get the current screen
             var lCurrentScreen = MonitorFromPoint(lMousePosition, MonitorOptions.MONITOR_DEFAULTTONEAREST);
+            var lPrimaryScreen = MonitorFromPoint(new POINT(0,0), MonitorOptions.MONITOR_DEFAULTTOPRIMARY);
 
             // Try and get the current screen information
             var lCurrentScreenInfo = new MONITORINFO();
             if (GetMonitorInfo(lCurrentScreen, lCurrentScreenInfo) == false)
+                return;
+
+            // Try and get the primary screen information
+            var lPrimaryScreenInfo = new MONITORINFO();
+            if (GetMonitorInfo(lPrimaryScreen, lPrimaryScreenInfo) == false)
                 return;
 
             // If this has changed from the last one, update the transform
@@ -295,14 +301,50 @@ namespace Fasetto.Word
             // Store last know screen
             mLastScreen = lCurrentScreen;
 
+            // Get work area sizes and rations
+            var currentX = lCurrentScreenInfo.rcWork.Left - lCurrentScreenInfo.rcMonitor.Left;
+            var currentY = lCurrentScreenInfo.rcWork.Top - lCurrentScreenInfo.rcMonitor.Top;
+            var currentWidth = (lCurrentScreenInfo.rcWork.Right - lCurrentScreenInfo.rcWork.Left);
+            var currentHeight = (lCurrentScreenInfo.rcWork.Bottom - lCurrentScreenInfo.rcWork.Top);
+            var currentRatio = (float)currentWidth / (float)currentHeight;
+
+            var primaryX = lPrimaryScreenInfo.rcWork.Left - lPrimaryScreenInfo.rcMonitor.Left;
+            var primaryY = lPrimaryScreenInfo.rcWork.Top - lPrimaryScreenInfo.rcMonitor.Top;
+            var primaryWidth = (lPrimaryScreenInfo.rcWork.Right - lPrimaryScreenInfo.rcWork.Left);
+            var primaryHeight = (lPrimaryScreenInfo.rcWork.Bottom - lPrimaryScreenInfo.rcWork.Top);
+            var primaryRatio = (float)primaryWidth / (float)primaryHeight;
+
             // Get min/max structure to fill with information
             var lMmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO));
 
-            // Size size limits, relative to 0,0 being the current screens top-left corner
-            lMmi.ptMaxPosition.X = lCurrentScreenInfo.rcWork.Left - lCurrentScreenInfo.rcMonitor.Left;
-            lMmi.ptMaxPosition.Y = lCurrentScreenInfo.rcWork.Top - lCurrentScreenInfo.rcMonitor.Top;
-            lMmi.ptMaxSize.X = lCurrentScreenInfo.rcWork.Right - lCurrentScreenInfo.rcWork.Left;
-            lMmi.ptMaxSize.Y = lCurrentScreenInfo.rcWork.Bottom - lCurrentScreenInfo.rcWork.Top;
+            // NOTE: rcMonitor is the monitor size
+            //       rcWork is the available screen size (so the area inside the taskbar start menu for example)
+
+            // Size size limits (used by Windows when maximized)
+            // relative to 0,0 being the current screens top-left corner
+            //
+            //  - Position
+            lMmi.ptMaxPosition.X = currentX;
+            lMmi.ptMaxPosition.Y = currentY;
+            //
+            // - Size
+            lMmi.ptMaxSize.X = currentWidth;
+            lMmi.ptMaxSize.Y = currentHeight;
+
+            //
+            // BUG: 
+            // NOTE: I've noticed a bug which I think is Windows itself
+            //       If your non-primary monitor has a greater width than your primary
+            //       (or possibly due to the screen ratio's being different)
+            //       then setting the max X on the monitor to the correct value causes
+            //       it to scale wrong. 
+            //
+            //       The fix seems to be to set the max width only (height is fine)
+            //       to that of the primary monitor, not the current monitor
+            //        
+            //       However, 1 pixel different and the size goes totally wrong again
+            //       so the fix doesn't work when the taskbar is on the left or right
+            //
 
             // Set monitor size
             CurrentMonitorSize = new Rectangle(lMmi.ptMaxPosition.X, lMmi.ptMaxPosition.Y, lMmi.ptMaxSize.X + lMmi.ptMaxPosition.X, lMmi.ptMaxSize.Y + lMmi.ptMaxPosition.Y);
