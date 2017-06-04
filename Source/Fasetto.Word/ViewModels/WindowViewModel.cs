@@ -56,10 +56,11 @@ namespace Fasetto.Word
         /// True if the window should be borderless because it is docked or maximized
         /// </summary>
         public bool Borderless => (mWindow.WindowState == WindowState.Maximized || mDockPosition != WindowDockPosition.Undocked);
+
         /// <summary>
         /// The size of the resize border around the window
         /// </summary>
-        public int ResizeBorder => Borderless ? 0 : 10;
+        public int ResizeBorder => 10;
 
         /// <summary>
         /// The size of the resize border around the window, taking into account the outer margin
