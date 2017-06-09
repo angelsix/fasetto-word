@@ -6,10 +6,7 @@
              xmlns:local="clr-namespace:Fasetto.Word"
              xmlns:core="clr-namespace:Fasetto.Word.Core;assembly=Fasetto.Word.Core"
              mc:Ignorable="d" 
-             d:DataContext="{x:Static core:ChatAttachmentPopupMenuDesignModel.Instance}"
-             d:DesignHeight="100" d:DesignWidth="300"
-             Height="100"
-             Width="250">
+             d:DataContext="{x:Static core:ChatAttachmentPopupMenuDesignModel.Instance}">
 
     <!-- Chat message container -->
     <Grid>
@@ -21,7 +18,7 @@
 
         <!-- Speech bubble rectangle -->
         <Border CornerRadius="10"
-                    Padding="15"
+                    Padding="12"
                     Margin="5 0 0 0"
                     Background="{Binding BubbleBackground, Converter={local:StringRGBToBrushConverter}}"
                     >
@@ -31,12 +28,8 @@
             </Border.Effect>
 
             <!-- Message text -->
-            <TextBlock VerticalAlignment="Center"
-                           TextWrapping="Wrap"
-                           FontFamily="{StaticResource LatoRegular}"
-                           Foreground="{StaticResource WordDarkBlueBrush}"
-                           Text="test"
-                           />
+            <ContentControl Content="{Binding Converter={local:PopupContentConverter}}" />
+
         </Border>
 
         <!-- Chat bubble anchor -->
