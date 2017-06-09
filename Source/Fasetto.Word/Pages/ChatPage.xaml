@@ -25,6 +25,17 @@
             
         </Grid.RowDefinitions>
 
+        <!-- Popup Overlay -->
+        <Border Background="Transparent" 
+                Grid.RowSpan="2"
+                Panel.ZIndex="1"
+                Visibility="{Binding AnyPopupVisible, Converter={local:BooleanToVisiblityConverter}, ConverterParameter=True}"
+                >
+            <Border.InputBindings>
+                <MouseBinding MouseAction="LeftClick" Command="{Binding PopupClickawayCommand}" />
+            </Border.InputBindings>
+        </Border>
+
         <!-- Title bar -->
         <Grid Height="50">
 
@@ -58,6 +69,7 @@
         <!-- Attachment Menu Popup -->
         <local:BubbleContent 
             Grid.Row="1"
+            Panel.ZIndex="2"
             DataContext="{Binding AttachmentMenu}"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Left"
@@ -66,6 +78,7 @@
 
         <!-- Message Send Text box -->
         <Grid Grid.Row="2" 
+              Panel.ZIndex="3"
               MinHeight="50"
               MaxHeight="114"
               Background="{StaticResource ForegroundLightBrush}"
