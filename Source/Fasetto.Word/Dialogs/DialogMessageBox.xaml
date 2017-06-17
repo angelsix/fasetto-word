@@ -1,0 +1,24 @@
+﻿<local:BaseDialogUserControl x:Class="Fasetto.Word.DialogMessageBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Fasetto.Word"
+            xmlns:core="clr-namespace:Fasetto.Word.Core;assembly=Fasetto.Word.Core"
+             mc:Ignorable="d">
+    <StackPanel d:DataContext="{x:Static core:MessageBoxDialogDesignModel.Instance}"
+                Background="{StaticResource ForegroundLightBrush}"
+                >
+        <TextBlock Text="{Binding Message}"
+                   Padding="5"
+                   Foreground="{StaticResource ForegroundVeryDarkBrush}"
+                   />
+
+        <Button Content="{Binding OkText}"
+                FontSize="{StaticResource FontSizeRegular}"
+                Command="{Binding CloseCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:BaseDialogUserControl}}}"
+                HorizontalAlignment="Center"
+                />
+        
+    </StackPanel>
+</local:BaseDialogUserControl>
