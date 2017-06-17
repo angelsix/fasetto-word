@@ -44,6 +44,11 @@ namespace Fasetto.Word.Core
         /// </summary>
         public ICommand PopupClickawayCommand { get; set; }
 
+        /// <summary>
+        /// The command for when the user clicks the send button
+        /// </summary>
+        public ICommand SendCommand { get; set; }
+
         #endregion
 
         #region Constructor
@@ -56,6 +61,7 @@ namespace Fasetto.Word.Core
             // Create commands
             AttachmentButtonCommand = new RelayCommand(AttachmentButton);
             PopupClickawayCommand = new RelayCommand(PopupClickaway);
+            SendCommand = new RelayCommand(Send);
 
             // Make a default menu
             AttachmentMenu = new ChatAttachmentPopupMenuViewModel();
@@ -81,6 +87,19 @@ namespace Fasetto.Word.Core
         {
             // Hide attachment menu
             AttachmentMenuVisible = false;
+        }
+
+        /// <summary>
+        /// When the user clicks the send button, sends the message
+        /// </summary>
+        public void Send()
+        {
+            IoC.UI.ShowMessage(new MessageBoxDialogViewModel
+            {
+                Title = "Send Message",
+                Message = "Thank you for writing a nice message :)",
+                OkText = "OK"
+            });
         }
 
         #endregion
