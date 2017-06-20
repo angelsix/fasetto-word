@@ -270,17 +270,59 @@ namespace Fasetto.Word
             // Create the storyboard
             var sb = new Storyboard();
 
-            // Get content width
-            var innerWidth = ((element as Border).Child as FrameworkElement).ActualWidth;
+            // Run until element is unloaded
+            var unloaded = false;
 
-            // Add marquee animation
-            sb.AddMarquee(seconds, element.ActualWidth, innerWidth);
+            // Monitor for element unloading
+            element.Unloaded += (s, e) => unloaded = true;
 
-            // Start animating
-            sb.Begin(element);
+            // Run a loop off the caller thread
+            Task.Run(async () =>
+            {
+                // While the element is still available, recheck the size
+                // after every loop in case the container was resized
+                while (element != null && !unloaded)
+                {
+                    // Create width variables
+                    var width = 0d;
+                    var innerWidth = 0d;
 
-            // Make page visible
-            element.Visibility = Visibility.Visible;
+                    try
+                    {
+                        // Check if element is still loaded
+                        if (element == null || unloaded)
+                            break;
+
+                        // Try and get current width
+                        width = element.ActualWidth;
+                        innerWidth = ((element as Border).Child as FrameworkElement).ActualWidth;
+                    }
+                    catch
+                    {
+                        // Any issues then stop animating (presume element destroyed)
+                        break;
+                    }
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        // Add marquee animation
+                        sb.AddMarquee(seconds, width, innerWidth);
+
+                        // Start animating
+                        sb.Begin(element);
+
+                        // Make page visible
+                        element.Visibility = Visibility.Visible;
+                    });
+
+                    // Wait for it to finish animating
+                    await Task.Delay((int)seconds * 1000);
+
+                    // If this is from first load or zero seconds of animation, do not repeat
+                    if (seconds == 0)
+                        break;
+                }
+            });
         }
 
         #endregion
