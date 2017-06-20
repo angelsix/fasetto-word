@@ -251,5 +251,38 @@ namespace Fasetto.Word
 
         #endregion
 
+        #region Marquee
+
+        /// <summary>
+        /// Animates a marquee style element
+        /// The structure should be:
+        /// [Border ClipToBounds="True"]
+        ///   [Border local:AnimateMarqueeProperty.Value="True"]
+        ///      [Content HorizontalAlignment="Left"]
+        ///   [/Border]
+        /// [/Border]
+        /// </summary>
+        /// <param name="element">The element to animate</param>
+        /// <param name="seconds">The time the animation will take</param>
+        /// <returns></returns>
+        public static void MarqueeAsync(this FrameworkElement element, float seconds = 3f)
+        {
+            // Create the storyboard
+            var sb = new Storyboard();
+
+            // Get content width
+            var innerWidth = ((element as Border).Child as FrameworkElement).ActualWidth;
+
+            // Add marquee animation
+            sb.AddMarquee(seconds, element.ActualWidth, innerWidth);
+
+            // Start animating
+            sb.Begin(element);
+
+            // Make page visible
+            element.Visibility = Visibility.Visible;
+        }
+
+        #endregion
     }
 }
