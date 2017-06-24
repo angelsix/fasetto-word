@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using System.Windows;
 
 namespace Fasetto.Word
 {
@@ -35,11 +36,15 @@ namespace Fasetto.Word
                 // Create a single self-unhookable event 
                 // for the elements Loaded event
                 RoutedEventHandler onLoaded = null;
-                onLoaded = (ss, ee) =>
+                onLoaded = async (ss, ee) =>
                 {
+                    // Slight delay after load is needed for some elements to get laid out
+                    // and their width/heights correctly calculated
+                    await Task.Delay(5);
+
                     // Unhook ourselves
                     element.Loaded -= onLoaded;
-
+                    
                     // Do desired animation
                     DoAnimation(element, (bool)value);
 
@@ -111,6 +116,18 @@ namespace Fasetto.Word
             else
                 // Animate out
                 await element.FadeOutAsync(FirstLoad ? 0 : 0.3f);
+        }
+    }
+
+    /// <summary>
+    /// Animates a framework element sliding it from right to left and repeating forever
+    /// </summary>
+    public class AnimateMarqueeProperty : AnimateBaseProperty<AnimateMarqueeProperty>
+    {
+        protected override void DoAnimation(FrameworkElement element, bool value)
+        {
+            // Animate in
+            element.MarqueeAsync(FirstLoad ? 0 : 3f);
         }
     }
 }

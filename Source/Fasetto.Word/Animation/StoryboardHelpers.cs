@@ -224,5 +224,31 @@ namespace Fasetto.Word
         }
 
         #endregion
+
+
+        /// <summary>
+        /// Adds a marquee scrolling right to left animation to the storyboard
+        /// </summary>
+        /// <param name="storyboard">The storyboard to add the animation to</param>
+        /// <param name="seconds">The time the animation will take</param>
+        /// <param name="contentOffset">The inner contents size, to start the marquee as soon as that content has scrolled out of view</param>
+        /// <param name="offset">The offset of the parent to scroll within</param>
+        public static void AddMarquee(this Storyboard storyboard, float seconds, double offset = 0, double contentOffset = 0)
+        {
+            // Create the margin animate from right to left
+            var animation = new ThicknessAnimation
+            {
+                Duration = new Duration(TimeSpan.FromSeconds(seconds)),
+                From = new Thickness(offset, 0, -offset, 0),
+                To = new Thickness(-contentOffset, 0, contentOffset, 0),
+                RepeatBehavior = RepeatBehavior.Forever
+            };
+
+            // Set the target property name
+            Storyboard.SetTargetProperty(animation, new PropertyPath("Margin"));
+
+            // Add this to the storyboard
+            storyboard.Children.Add(animation);
+        }
     }
 }

@@ -20,7 +20,7 @@ namespace Fasetto.Word
                 return time.ToLocalTime().ToString("HH:mm");
 
             // Otherwise, return a full date
-            return time.ToLocalTime().ToString("HH:mm, MMM yyyy");
+            return time.ToLocalTime().ToString("HH:mm, dd MMM yyyy");
         }
 
         public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
