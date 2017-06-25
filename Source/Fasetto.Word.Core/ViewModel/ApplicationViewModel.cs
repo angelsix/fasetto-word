@@ -22,6 +22,11 @@ namespace Fasetto.Word.Core
         public bool SideMenuVisible { get; set; } = true;
 
         /// <summary>
+        /// True if the settings menu should be shown
+        /// </summary>
+        public bool SettingsMenuVisible { get; set; }
+
+        /// <summary>
         /// Navigates to the specified page
         /// </summary>
         /// <param name="page">The page to go to</param>

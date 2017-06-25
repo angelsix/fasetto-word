@@ -116,7 +116,7 @@ namespace Fasetto.Word
         /// such as when a popup is visible or the window is not focused
         /// </summary>
         public bool DimmableOverlayVisible { get; set; }
-
+        
         #endregion
 
         #region Commands
