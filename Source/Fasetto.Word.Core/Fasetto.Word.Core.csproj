@@ -87,6 +87,7 @@
     <Compile Include="ViewModel\PopupMenu\ChatAttachmentPopupMenuViewModel.cs" />
     <Compile Include="ViewModel\PopupMenu\BasePopupViewModel.cs" />
     <Compile Include="ViewModel\RegisterViewModel.cs" />
+    <Compile Include="ViewModel\SettingsViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FodyWeavers.xml" />
