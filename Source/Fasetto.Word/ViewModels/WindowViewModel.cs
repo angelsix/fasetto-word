@@ -189,14 +189,7 @@ namespace Fasetto.Word
         /// <returns></returns>
         private Point GetMousePosition()
         {
-            // Position of the mouse relative to the window
-            var position = Mouse.GetPosition(mWindow);
-
-            // Add the window position so its a "ToScreen"
-            if (mWindow.WindowState == WindowState.Maximized)
-                return new Point(position.X +  mWindowResizer.CurrentMonitorSize.Left, position.Y + mWindowResizer.CurrentMonitorSize.Top);
-            else
-                return new Point(position.X + mWindow.Left, position.Y + mWindow.Top);
+            return mWindowResizer.GetCursorPosition();
         }
 
         /// <summary>

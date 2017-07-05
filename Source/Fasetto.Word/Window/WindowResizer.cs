@@ -117,6 +117,13 @@ namespace Fasetto.Word
         /// </summary>
         public Rectangle CurrentMonitorSize { get; set; } = new Rectangle();
 
+        /// <summary>
+        /// The size and position of the current screen in relation to the multi-screen desktop
+        /// For example a second monitor on the right will have a Left position of
+        /// the X resolution of the screens on the left
+        /// </summary>
+        public Rect CurrentScreenSize => mScreenSize;
+
         #endregion
 
         #region Constructor
@@ -359,6 +366,19 @@ namespace Fasetto.Word
 
             // Now we have the max size, allow the host to tweak as needed
             Marshal.StructureToPtr(lMmi, lParam, true);
+        }
+
+        /// <summary>
+        /// Gets the current cursor position in screen coordinates relative to an entire multi-desktop position
+        /// </summary>
+        /// <returns></returns>
+        public Point GetCursorPosition()
+        {
+            // Get mouse position
+            GetCursorPos(out POINT lMousePosition);
+
+            // Apply DPI scaling
+            return new Point(lMousePosition.X / mMonitorDpi.Value.DpiScaleX, lMousePosition.Y / mMonitorDpi.Value.DpiScaleY);
         }
     }
 
