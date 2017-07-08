@@ -46,7 +46,7 @@
 
             <!-- Main Content -->
             <Grid Grid.Row="1"
-                  Width="700"
+                  Width="600"
                   VerticalAlignment="Top"
                   >
 
@@ -57,7 +57,7 @@
 
 
                 <!-- Profile Picture -->
-                <Grid Margin="0 0 10 0"
+                <Grid Margin="0 0 30 0"
                       Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}}">
                     
                     <!-- Mask for rounded corners-->
@@ -78,39 +78,15 @@
                 </Grid>
                 
                 <!-- Profile details -->
-                <Grid Grid.Column="1"
-                      local:PanelChildMarginProperty.Value="15 8"
-                      >
+                <StackPanel Grid.Column="1">
+                    <local:TextEntryControl />
+                    <local:TextEntryControl />
+                    <local:TextEntryControl />
+                    <local:TextEntryControl />
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+                </StackPanel>
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
 
-                    <!-- Labels -->
-                    <TextBlock Text="Name" FontFamily="{StaticResource LatoRegular}" />
-                    <TextBlock Text="Username" Grid.Row="1" FontFamily="{StaticResource LatoRegular}" />
-                    <TextBlock Text="Password" Grid.Row="2" FontFamily="{StaticResource LatoRegular}" />
-                    <TextBlock Text="Email" Grid.Row="3" FontFamily="{StaticResource LatoRegular}" />
-                    
-                    <!-- Content -->
-                    <TextBlock Text="Luke Malpass" Grid.Column="1" />
-                    <TextBlock Text="luke" Grid.Column="1" Grid.Row="1" />
-                    <TextBlock Text="********" Grid.Column="1" Grid.Row="2" />
-                    <TextBlock Text="contact@angelsix.com" Grid.Column="1" Grid.Row="3" />
-
-                </Grid>
-                
-                
             </Grid>
             
             
