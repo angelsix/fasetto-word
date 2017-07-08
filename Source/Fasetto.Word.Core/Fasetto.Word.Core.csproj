@@ -62,7 +62,7 @@
     <Compile Include="IoC\Interfaces\IUIManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\SecureStringHelpers.cs" />
-    <Compile Include="ViewModel\ApplicationViewModel.cs" />
+    <Compile Include="ViewModel\Application\ApplicationViewModel.cs" />
     <Compile Include="ViewModel\Base\BaseViewModel.cs" />
     <Compile Include="ViewModel\Base\IHavePassword.cs" />
     <Compile Include="ViewModel\Base\RelayCommand.cs" />
@@ -78,7 +78,9 @@
     <Compile Include="ViewModel\Dialogs\BaseDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\Design\MessageBoxDialogDesignModel.cs" />
     <Compile Include="ViewModel\Dialogs\MessageBoxDialogViewModel.cs" />
-    <Compile Include="ViewModel\LoginViewModel.cs" />
+    <Compile Include="ViewModel\Application\LoginViewModel.cs" />
+    <Compile Include="ViewModel\Input\Design\TextEntryDesignModel.cs" />
+    <Compile Include="ViewModel\Input\TextEntryViewModel.cs" />
     <Compile Include="ViewModel\Menu\Design\MenuDesignModel.cs" />
     <Compile Include="ViewModel\Menu\Design\MenuItemDesignModel.cs" />
     <Compile Include="ViewModel\Menu\MenuItemViewModel.cs" />
@@ -86,8 +88,8 @@
     <Compile Include="ViewModel\PopupMenu\Design\ChatAttachmentPopupMenuDesignModel.cs" />
     <Compile Include="ViewModel\PopupMenu\ChatAttachmentPopupMenuViewModel.cs" />
     <Compile Include="ViewModel\PopupMenu\BasePopupViewModel.cs" />
-    <Compile Include="ViewModel\RegisterViewModel.cs" />
-    <Compile Include="ViewModel\SettingsViewModel.cs" />
+    <Compile Include="ViewModel\Application\RegisterViewModel.cs" />
+    <Compile Include="ViewModel\Application\SettingsViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FodyWeavers.xml" />
