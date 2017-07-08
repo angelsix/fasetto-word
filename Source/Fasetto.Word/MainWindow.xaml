@@ -13,6 +13,8 @@
         Icon="Images/Logo/logo-small.png"
         MinWidth="{Binding WindowMinimumWidth}"
         MinHeight="{Binding WindowMinimumHeight}"
+        Deactivated="AppWindow_Deactivated"
+        Activated="AppWindow_Activated"
         Title="Welcome, friend!" Height="600" Width="900">
 
     <Window.Resources>
@@ -131,6 +133,21 @@
                 <ImageBrush TileMode="Tile" ViewportUnits="Absolute" Viewport="0 0 500 500" ImageSource="/Images/Backgrounds/emoji-background.png" />
             </Grid.Background>
 
+            <!-- Settings page -->
+            <local:SettingsControl Grid.ColumnSpan="2"
+                                   Panel.ZIndex="9"
+                                   local:AnimateSlideInFromBottomMarginProperty.Value="{Binding ApplicationViewModel.SettingsMenuVisible, Source={x:Static local:ViewModelLocator.Instance}}"
+                                   />
+
+            <!-- Dimmed overlay -->
+            <Border Grid.ColumnSpan="2"
+                    Panel.ZIndex="10"
+                    Opacity="0.3">
+                <Border Background="{StaticResource ForegroundVeryDarkBrush}"
+                        local:AnimateFadeInProperty.Value="{Binding DimmableOverlayVisible}"
+                        />
+            </Border>
+            
             <local:PageHost Grid.Column="1" 
                    d:DataContext=""
                    DataContext="{Binding ApplicationViewModel.CurrentPage, 

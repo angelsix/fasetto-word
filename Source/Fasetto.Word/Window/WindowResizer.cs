@@ -16,15 +16,35 @@ namespace Fasetto.Word
         /// <summary>
         /// Not docked
         /// </summary>
-        Undocked,
+        Undocked = 0,
         /// <summary>
         /// Docked to the left of the screen
         /// </summary>
-        Left,
+        Left = 1,
         /// <summary>
         /// Docked to the right of the screen
         /// </summary>
-        Right,
+        Right = 2,
+        /// <summary>
+        /// Docked to the top/bottom of the screen
+        /// </summary>
+        TopBottom = 3,
+        /// <summary>
+        /// Docked to the top-left of the screen
+        /// </summary>
+        TopLeft = 4,
+        /// <summary>
+        /// Docked to the top-right of the screen
+        /// </summary>
+        TopRight = 5,
+        /// <summary>
+        /// Docked to the bottom-left of the screen
+        /// </summary>
+        BottomLeft = 6,
+        /// <summary>
+        /// Docked to the bottom-right of the screen
+        /// </summary>
+        BottomRight = 7,
     }
 
 
@@ -97,6 +117,13 @@ namespace Fasetto.Word
         /// </summary>
         public Rectangle CurrentMonitorSize { get; set; } = new Rectangle();
 
+        /// <summary>
+        /// The size and position of the current screen in relation to the multi-screen desktop
+        /// For example a second monitor on the right will have a Left position of
+        /// the X resolution of the screens on the left
+        /// </summary>
+        public Rect CurrentScreenSize => mScreenSize;
+
         #endregion
 
         #region Constructor
@@ -115,6 +142,7 @@ namespace Fasetto.Word
 
             // Monitor for edge docking
             mWindow.SizeChanged += Window_SizeChanged;
+            mWindow.LocationChanged += Window_LocationChanged;
         }
 
         #endregion
@@ -145,6 +173,16 @@ namespace Fasetto.Word
         #region Edge Docking
 
         /// <summary>
+        /// Monitor for moving of the window and constantly check for docked positions
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_LocationChanged(object sender, EventArgs e)
+        {
+            Window_SizeChanged(null, null);
+        }
+
+        /// <summary>
         /// Monitors for size changes and detects if the window has been docked (Aero snap) to an edge
         /// </summary>
         /// <param name="sender"></param>
@@ -155,13 +193,10 @@ namespace Fasetto.Word
             if (mMonitorDpi == null)
                 return;
 
-            // Get the WPF size
-            var size = e.NewSize;
-
             // Get window rectangle
             var top = mWindow.Top;
             var left = mWindow.Left;
-            var bottom = top + size.Height;
+            var bottom = top + mWindow.Height;
             var right = left + mWindow.Width;
 
             // Get window position/size in device pixels
@@ -169,10 +204,10 @@ namespace Fasetto.Word
             var windowBottomRight = new Point(right * mMonitorDpi.Value.DpiScaleX, bottom * mMonitorDpi.Value.DpiScaleX);
 
             // Check for edges docked
-            var edgedTop = windowTopLeft.Y <= (mScreenSize.Top + mEdgeTolerance);
-            var edgedLeft = windowTopLeft.X <= (mScreenSize.Left + mEdgeTolerance);
-            var edgedBottom = windowBottomRight.Y >= (mScreenSize.Bottom - mEdgeTolerance);
-            var edgedRight = windowBottomRight.X >= (mScreenSize.Right - mEdgeTolerance);
+            var edgedTop = windowTopLeft.Y <= (mScreenSize.Top + mEdgeTolerance) && windowTopLeft.Y >= (mScreenSize.Top - mEdgeTolerance);
+            var edgedLeft = windowTopLeft.X <= (mScreenSize.Left + mEdgeTolerance) && windowTopLeft.X >= (mScreenSize.Left - mEdgeTolerance);
+            var edgedBottom = windowBottomRight.Y >= (mScreenSize.Bottom - mEdgeTolerance) && windowBottomRight.Y <= (mScreenSize.Bottom + mEdgeTolerance);
+            var edgedRight = windowBottomRight.X >= (mScreenSize.Right - mEdgeTolerance) && windowBottomRight.X <= (mScreenSize.Right + mEdgeTolerance);
 
             // Get docked position
             var dock = WindowDockPosition.Undocked;
@@ -180,8 +215,25 @@ namespace Fasetto.Word
             // Left docking
             if (edgedTop && edgedBottom && edgedLeft)
                 dock = WindowDockPosition.Left;
+            // Right docking
             else if (edgedTop && edgedBottom && edgedRight)
                 dock = WindowDockPosition.Right;
+            // Top/bottom
+            else if (edgedTop && edgedBottom)
+                dock = WindowDockPosition.TopBottom;
+            // Top-left
+            else if (edgedTop && edgedLeft)
+                dock = WindowDockPosition.TopLeft;
+            // Top-right
+            else if (edgedTop && edgedRight)
+                dock = WindowDockPosition.TopRight;
+            // Bottom-left
+            else if (edgedBottom && edgedLeft)
+                dock = WindowDockPosition.BottomLeft;
+            // Bottom-right
+            else if (edgedBottom && edgedRight)
+                dock = WindowDockPosition.BottomRight;
+
             // None
             else
                 dock = WindowDockPosition.Undocked;
@@ -234,13 +286,19 @@ namespace Fasetto.Word
         {
             // Get the point position to determine what screen we are on
             GetCursorPos(out POINT lMousePosition);
-            
+
             // Now get the current screen
             var lCurrentScreen = MonitorFromPoint(lMousePosition, MonitorOptions.MONITOR_DEFAULTTONEAREST);
+            var lPrimaryScreen = MonitorFromPoint(new POINT(0,0), MonitorOptions.MONITOR_DEFAULTTOPRIMARY);
 
             // Try and get the current screen information
             var lCurrentScreenInfo = new MONITORINFO();
             if (GetMonitorInfo(lCurrentScreen, lCurrentScreenInfo) == false)
+                return;
+
+            // Try and get the primary screen information
+            var lPrimaryScreenInfo = new MONITORINFO();
+            if (GetMonitorInfo(lPrimaryScreen, lPrimaryScreenInfo) == false)
                 return;
 
             // If this has changed from the last one, update the transform
@@ -250,28 +308,77 @@ namespace Fasetto.Word
             // Store last know screen
             mLastScreen = lCurrentScreen;
 
+            // Get work area sizes and rations
+            var currentX = lCurrentScreenInfo.RCWork.Left - lCurrentScreenInfo.RCMonitor.Left;
+            var currentY = lCurrentScreenInfo.RCWork.Top - lCurrentScreenInfo.RCMonitor.Top;
+            var currentWidth = (lCurrentScreenInfo.RCWork.Right - lCurrentScreenInfo.RCWork.Left);
+            var currentHeight = (lCurrentScreenInfo.RCWork.Bottom - lCurrentScreenInfo.RCWork.Top);
+            var currentRatio = (float)currentWidth / (float)currentHeight;
+
+            var primaryX = lPrimaryScreenInfo.RCWork.Left - lPrimaryScreenInfo.RCMonitor.Left;
+            var primaryY = lPrimaryScreenInfo.RCWork.Top - lPrimaryScreenInfo.RCMonitor.Top;
+            var primaryWidth = (lPrimaryScreenInfo.RCWork.Right - lPrimaryScreenInfo.RCWork.Left);
+            var primaryHeight = (lPrimaryScreenInfo.RCWork.Bottom - lPrimaryScreenInfo.RCWork.Top);
+            var primaryRatio = (float)primaryWidth / (float)primaryHeight;
+
             // Get min/max structure to fill with information
             var lMmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO));
 
-            // Size size limits, relative to 0,0 being the current screens top-left corner
-            lMmi.ptMaxPosition.X = lCurrentScreenInfo.rcWork.Left;
-            lMmi.ptMaxPosition.Y = lCurrentScreenInfo.rcWork.Top;
-            lMmi.ptMaxSize.X = lCurrentScreenInfo.rcWork.Right - lCurrentScreenInfo.rcWork.Left;
-            lMmi.ptMaxSize.Y = lCurrentScreenInfo.rcWork.Bottom - lCurrentScreenInfo.rcWork.Top;
+            // NOTE: rcMonitor is the monitor size
+            //       rcWork is the available screen size (so the area inside the taskbar start menu for example)
+
+            // Size size limits (used by Windows when maximized)
+            // relative to 0,0 being the current screens top-left corner
+            //
+            //  - Position
+            lMmi.PointMaxPosition.X = currentX;
+            lMmi.PointMaxPosition.Y = currentY;
+            //
+            // - Size
+            lMmi.PointMaxSize.X = currentWidth;
+            lMmi.PointMaxSize.Y = currentHeight;
+
+            //
+            // BUG: 
+            // NOTE: I've noticed a bug which I think is Windows itself
+            //       If your non-primary monitor has a greater width than your primary
+            //       (or possibly due to the screen ratio's being different)
+            //       then setting the max X on the monitor to the correct value causes
+            //       it to scale wrong. 
+            //
+            //       The fix seems to be to set the max width only (height is fine)
+            //       to that of the primary monitor, not the current monitor
+            //        
+            //       However, 1 pixel different and the size goes totally wrong again
+            //       so the fix doesn't work when the taskbar is on the left or right
+            //
 
             // Set monitor size
-            CurrentMonitorSize = new Rectangle(lMmi.ptMaxPosition.X, lMmi.ptMaxPosition.Y, lMmi.ptMaxSize.X + lMmi.ptMaxPosition.X, lMmi.ptMaxSize.Y + lMmi.ptMaxPosition.Y);
+            CurrentMonitorSize = new Rectangle(lMmi.PointMaxPosition.X, lMmi.PointMaxPosition.Y, lMmi.PointMaxSize.X + lMmi.PointMaxPosition.X, lMmi.PointMaxSize.Y + lMmi.PointMaxPosition.Y);
 
             // Set min size
             var minSize = new Point(mWindow.MinWidth * mMonitorDpi.Value.DpiScaleX, mWindow.MinHeight * mMonitorDpi.Value.DpiScaleX);
-            lMmi.ptMinTrackSize.X = (int)minSize.X;
-            lMmi.ptMinTrackSize.Y = (int)minSize.Y;
+            lMmi.PointMinTrackSize.X = (int)minSize.X;
+            lMmi.PointMinTrackSize.Y = (int)minSize.Y;
 
             // Store new size
-            mScreenSize = new Rect(lMmi.ptMaxPosition.X, lMmi.ptMaxPosition.Y, lMmi.ptMaxSize.X, lMmi.ptMaxSize.Y);
+            mScreenSize = new Rect(lCurrentScreenInfo.RCWork.Left, lCurrentScreenInfo.RCWork.Top, lMmi.PointMaxSize.X, lMmi.PointMaxSize.Y);
 
             // Now we have the max size, allow the host to tweak as needed
             Marshal.StructureToPtr(lMmi, lParam, true);
+        }
+
+        /// <summary>
+        /// Gets the current cursor position in screen coordinates relative to an entire multi-desktop position
+        /// </summary>
+        /// <returns></returns>
+        public Point GetCursorPosition()
+        {
+            // Get mouse position
+            GetCursorPos(out POINT lMousePosition);
+
+            // Apply DPI scaling
+            return new Point(lMousePosition.X / mMonitorDpi.Value.DpiScaleX, lMousePosition.Y / mMonitorDpi.Value.DpiScaleY);
         }
     }
 
@@ -288,35 +395,41 @@ namespace Fasetto.Word
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
     public class MONITORINFO
     {
-        public int cbSize = Marshal.SizeOf(typeof(MONITORINFO));
-        public Rectangle rcMonitor = new Rectangle();
-        public Rectangle rcWork = new Rectangle();
-        public int dwFlags = 0;
+#pragma warning disable IDE1006 // Naming Styles
+        public int CBSize = Marshal.SizeOf(typeof(MONITORINFO));
+        public Rectangle RCMonitor = new Rectangle();
+        public Rectangle RCWork = new Rectangle();
+        public int DWFlags = 0;
+#pragma warning restore IDE1006 // Naming Styles
     }
 
 
     [StructLayout(LayoutKind.Sequential)]
     public struct Rectangle
     {
+#pragma warning disable IDE1006 // Naming Styles
         public int Left, Top, Right, Bottom;
+#pragma warning restore IDE1006 // Naming Styles
 
         public Rectangle(int left, int top, int right, int bottom)
         {
-            this.Left = left;
-            this.Top = top;
-            this.Right = right;
-            this.Bottom = bottom;
+            Left = left;
+            Top = top;
+            Right = right;
+            Bottom = bottom;
         }
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct MINMAXINFO
     {
-        public POINT ptReserved;
-        public POINT ptMaxSize;
-        public POINT ptMaxPosition;
-        public POINT ptMinTrackSize;
-        public POINT ptMaxTrackSize;
+#pragma warning disable IDE1006 // Naming Styles
+        public POINT PointReserved;
+        public POINT PointMaxSize;
+        public POINT PointMaxPosition;
+        public POINT PointMinTrackSize;
+        public POINT PointMaxTrackSize;
+#pragma warning restore IDE1006 // Naming Styles
     };
 
     [StructLayout(LayoutKind.Sequential)]
@@ -325,19 +438,24 @@ namespace Fasetto.Word
         /// <summary>
         /// x coordinate of point.
         /// </summary>
+#pragma warning disable IDE1006 // Naming Styles
         public int X;
+#pragma warning restore IDE1006 // Naming Styles
+
         /// <summary>
         /// y coordinate of point.
         /// </summary>
+#pragma warning disable IDE1006 // Naming Styles
         public int Y;
+#pragma warning restore IDE1006 // Naming Styles
 
         /// <summary>
         /// Construct a point of coordinates (x,y).
         /// </summary>
         public POINT(int x, int y)
         {
-            this.X = x;
-            this.Y = y;
+            X = x;
+            Y = y;
         }
     }
 

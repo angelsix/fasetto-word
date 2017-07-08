@@ -56,10 +56,11 @@ namespace Fasetto.Word
         /// True if the window should be borderless because it is docked or maximized
         /// </summary>
         public bool Borderless => (mWindow.WindowState == WindowState.Maximized || mDockPosition != WindowDockPosition.Undocked);
+
         /// <summary>
         /// The size of the resize border around the window
         /// </summary>
-        public int ResizeBorder => Borderless ? 0 : 10;
+        public int ResizeBorder => 10;
 
         /// <summary>
         /// The size of the resize border around the window, taking into account the outer margin
@@ -110,6 +111,12 @@ namespace Fasetto.Word
         /// </summary>
         public GridLength TitleHeightGridLength => new GridLength(TitleHeight + ResizeBorder);
 
+        /// <summary>
+        /// True if we should have a dimmed overlay on the window
+        /// such as when a popup is visible or the window is not focused
+        /// </summary>
+        public bool DimmableOverlayVisible { get; set; }
+        
         #endregion
 
         #region Commands
@@ -182,14 +189,7 @@ namespace Fasetto.Word
         /// <returns></returns>
         private Point GetMousePosition()
         {
-            // Position of the mouse relative to the window
-            var position = Mouse.GetPosition(mWindow);
-
-            // Add the window position so its a "ToScreen"
-            if (mWindow.WindowState == WindowState.Maximized)
-                return new Point(position.X +  mWindowResizer.CurrentMonitorSize.Left, position.Y + mWindowResizer.CurrentMonitorSize.Top);
-            else
-                return new Point(position.X + mWindow.Left, position.Y + mWindow.Top);
+            return mWindowResizer.GetCursorPosition();
         }
 
         /// <summary>
