@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Fasetto.Word"
              xmlns:core="clr-namespace:Fasetto.Word.Core;assembly=Fasetto.Word.Core"
              mc:Ignorable="d" 
-             DataContext="{x:Static core:TextEntryDesignModel.Instance}">
+             d:DataContext="{x:Static core:TextEntryDesignModel.Instance}">
     
     <!-- Grey underline -->
     <Border BorderBrush="{StaticResource ForegroundDarkBrush}"
@@ -14,6 +14,11 @@
 
         <Grid Background="{StaticResource ForegroundLightBrush}">
 
+            <!-- Double click to edit -->
+            <Grid.InputBindings>
+                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding EditCommand}" />
+            </Grid.InputBindings>
+            
             <!-- Hover over to show edit button -->
             <Grid.Triggers>
                 <EventTrigger RoutedEvent="MouseEnter">
@@ -40,21 +45,24 @@
             
             <!-- Label -> Name* -> Buttons -->
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Name="LabelColumnDefinition" Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <!-- Label -->
             <TextBlock Text="{Binding Label}"
+                       Name="Label"
                        Margin="15 12"
+                       HorizontalAlignment="Left"
                        VerticalAlignment="Center"
                        FontFamily="{StaticResource LatoRegular}"
                        />
 
             <!-- Edit Content -->
-            <TextBox Text="{Binding EditedText}"
+            <TextBox Text="{Binding EditedText, UpdateSourceTrigger=PropertyChanged}"
                      Grid.Column="1"
+                     Opacity="0"
                      local:AnimateFadeInProperty.Value="{Binding Editing}"
                      local:FocusAndSelectProperty.Value="{Binding Editing}"
                      FontSize="{StaticResource FontSizeRegular}"
