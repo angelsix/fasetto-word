@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Fasetto.Word"
+             xmlns:core="clr-namespace:Fasetto.Word.Core;assembly=Fasetto.Word.Core"
+             d:DataContext="{x:Static core:SettingsDesignModel.Instance}"
              mc:Ignorable="d" >
     <Border Background="{StaticResource ForegroundLightBrush}" 
             Padding="15">
@@ -58,6 +60,7 @@
 
                 <!-- Profile Picture -->
                 <Grid Margin="0 0 30 0"
+                      VerticalAlignment="Top"
                       Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}}">
                     
                     <!-- Mask for rounded corners-->
@@ -78,11 +81,20 @@
                 </Grid>
                 
                 <!-- Profile details -->
-                <StackPanel Grid.Column="1">
-                    <local:TextEntryControl />
-                    <local:TextEntryControl />
-                    <local:TextEntryControl />
-                    <local:TextEntryControl />
+                <StackPanel Grid.Column="1"
+                            local:TextEntryWidthMatcherProperty.Value="True"
+                            >
+                    
+                    <local:TextEntryControl DataContext="{Binding Name}" />
+                    <local:TextEntryControl DataContext="{Binding Username}" />
+                    <local:PasswordEntryControl DataContext="{Binding Password}" />
+                    <local:TextEntryControl DataContext="{Binding Email}" />
+
+                    <Button Content="{Binding LogoutButtonText}"
+                            Command="{Binding LogoutCommand}"
+                            FontSize="{StaticResource FontSizeRegular}"
+                            
+                            />
 
                 </StackPanel>
 
