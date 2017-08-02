@@ -333,10 +333,20 @@ namespace Fasetto.Word
             //  - Position
             lMmi.PointMaxPosition.X = currentX;
             lMmi.PointMaxPosition.Y = currentY;
+
             //
             // - Size
             lMmi.PointMaxSize.X = currentWidth;
             lMmi.PointMaxSize.Y = currentHeight;
+
+            // NOTE: This fixes the bug mentioned below... setting the max size to the size of the current window
+            //       which I think is a reasonable limit for the window
+            //
+            //       In future we should find a good way to detect the size request coming from a window about to
+            //       maximize and limit this constraint to only when maximized. For now this is fine
+            //
+            lMmi.PointMaxTrackSize.X = currentWidth;
+            lMmi.PointMaxTrackSize.Y = currentHeight;
 
             //
             // BUG: 
