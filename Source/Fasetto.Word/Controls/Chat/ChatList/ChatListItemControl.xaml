@@ -16,6 +16,12 @@
                         
                         <!-- Content -->
                         <Border x:Name="background" Background="{StaticResource ForegroundLightBrush}">
+
+                            <!-- Click to open message -->
+                            <Border.InputBindings>
+                                <MouseBinding MouseAction="LeftClick" Command="{Binding OpenMessageCommand}" />
+                            </Border.InputBindings>
+                            
                             <Grid x:Name="container" Background="Transparent">
                             <Grid.ColumnDefinitions>
                                 <!-- New Message Indicator Bar -->
