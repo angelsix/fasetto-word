@@ -92,6 +92,7 @@
                 <!-- Time containers -->
                 <StackPanel Name="ExtraDetails" 
                             Grid.Row="2"
+                            Opacity="0"
                             HorizontalAlignment="{Binding SentByMe, Converter={local:SentByMeToAlignmentConverter}, ConverterParameter=True}"
                             Orientation="Horizontal">
 
