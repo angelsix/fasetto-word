@@ -8,6 +8,7 @@
       mc:Ignorable="d" 
       x:Name="Page"
       d:DesignHeight="700" d:DesignWidth="700"
+      d:DataContext="{x:Static core:ChatMessageListDesignModel.Instance}"
       >
 
     <Grid>
@@ -78,18 +79,23 @@
         </Grid>
         
         <!-- Chat List -->
-        <local:ChatMessageListControl Grid.Row="1" DataContext="{Binding}" />
+        <local:ChatMessageListControl 
+            x:Name="ChatMessageList" 
+            Grid.Row="1" 
+            DataContext="{Binding}"
+            />
         
         <!-- Attachment Menu Popup -->
-        <local:BubbleContent 
-            Grid.Row="1"
-            Panel.ZIndex="2"
-            DataContext="{Binding AttachmentMenu}"
-            VerticalAlignment="Bottom"
-            HorizontalAlignment="Left"
-            local:AnimateSlideInFromBottomProperty.Value="{Binding ViewModel.AttachmentMenuVisible, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:ChatPage}}}"
-            />
-
+        <Border Grid.Row="1"
+                Panel.ZIndex="2"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Left"
+                local:AnimateSlideInFromBottomProperty.Value="{Binding AttachmentMenuVisible}">
+            
+            <local:BubbleContent DataContext="{Binding AttachmentMenu}" />
+            
+        </Border>
+        
         <!-- Message Send Text box -->
         <Grid Grid.Row="2" 
               Panel.ZIndex="3"
