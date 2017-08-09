@@ -23,7 +23,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Window}">
                         <!-- Outer border with the drop shadow margin -->
-                        <Border Padding="{Binding OuterMarginSizeThickness, FallbackValue=10}">
+                        <Border Padding="{Binding OuterMarginSize, FallbackValue=10}">
                             
                             <!-- Main window outline -->
                             <Grid>

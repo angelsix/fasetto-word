@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -118,6 +116,12 @@ namespace Fasetto.Word
         public Rectangle CurrentMonitorSize { get; set; } = new Rectangle();
 
         /// <summary>
+        /// The margin around the window for the current window to compensate for any non-usable area
+        /// such as the task bar
+        /// </summary>
+        public Thickness CurrentMonitorMargin { get; private set; } = new Thickness();
+
+        /// <summary>
         /// The size and position of the current screen in relation to the multi-screen desktop
         /// For example a second monitor on the right will have a Left position of
         /// the X resolution of the screens on the left
@@ -189,6 +193,12 @@ namespace Fasetto.Word
         /// <param name="e"></param>
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            // Make sure our monitor info is up-to-date
+            WmGetMinMaxInfo(IntPtr.Zero, IntPtr.Zero);
+
+            // Get the monitor transform for the current position
+            mMonitorDpi = VisualTreeHelper.GetDpi(mWindow);
+
             // Cannot calculate size until we know monitor scale
             if (mMonitorDpi == null)
                 return;
@@ -278,7 +288,7 @@ namespace Fasetto.Word
 
         /// <summary>
         /// Get the min/max window size for this window
-        /// Correctly accounting for the taskbar size and position
+        /// Correctly accounting for the task bar size and position
         /// </summary>
         /// <param name="hwnd"></param>
         /// <param name="lParam"></param>
@@ -301,8 +311,9 @@ namespace Fasetto.Word
             if (GetMonitorInfo(lPrimaryScreen, lPrimaryScreenInfo) == false)
                 return;
 
+            // NOTE: Always update it
             // If this has changed from the last one, update the transform
-            if (lCurrentScreen != mLastScreen || mMonitorDpi == null)
+            //if (lCurrentScreen != mLastScreen || mMonitorDpi == null)
                 mMonitorDpi = VisualTreeHelper.GetDpi(mWindow);
 
             // Store last know screen
@@ -321,61 +332,68 @@ namespace Fasetto.Word
             var primaryHeight = (lPrimaryScreenInfo.RCWork.Bottom - lPrimaryScreenInfo.RCWork.Top);
             var primaryRatio = (float)primaryWidth / (float)primaryHeight;
 
-            // Get min/max structure to fill with information
-            var lMmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO));
+            if (lParam != IntPtr.Zero)
+            {
+                // Get min/max structure to fill with information
+                var lMmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO));
 
-            // NOTE: rcMonitor is the monitor size
-            //       rcWork is the available screen size (so the area inside the taskbar start menu for example)
+                //
+                //   NOTE: The below setting of max sizes we no longer do
+                //         as through observations, it appears Windows works
+                //         correctly only when the max window size is set to
+                //         EXACTLY the size of the primary window
+                // 
+                //         Anything else and the behavior is wrong and the max
+                //         window width on a secondary monitor if larger than the
+                //         primary then goes too large
+                //
+                //         Instead we now just add a margin to the window itself
+                //         to compensate when maximized
+                // 
+                //
+                // NOTE: rcMonitor is the monitor size
+                //       rcWork is the available screen size (so the area inside the task bar start menu for example)
 
-            // Size size limits (used by Windows when maximized)
-            // relative to 0,0 being the current screens top-left corner
-            //
-            //  - Position
-            lMmi.PointMaxPosition.X = currentX;
-            lMmi.PointMaxPosition.Y = currentY;
+                // Size size limits (used by Windows when maximized)
+                // relative to 0,0 being the current screens top-left corner
+                //
+                //  - Position
+                //lMmi.PointMaxPosition.X = currentX;
+                //lMmi.PointMaxPosition.Y = currentY;
 
-            //
-            // - Size
-            lMmi.PointMaxSize.X = currentWidth;
-            lMmi.PointMaxSize.Y = currentHeight;
+                //
+                // - Size
+                //lMmi.PointMaxSize.X = currentWidth;
+                //lMmi.PointMaxSize.Y = currentHeight;
 
-            // NOTE: This fixes the bug mentioned below... setting the max size to the size of the current window
-            //       which I think is a reasonable limit for the window
-            //
-            //       In future we should find a good way to detect the size request coming from a window about to
-            //       maximize and limit this constraint to only when maximized. For now this is fine
-            //
-            lMmi.PointMaxTrackSize.X = currentWidth;
-            lMmi.PointMaxTrackSize.Y = currentHeight;
+                // Set to primary monitor size
+                lMmi.PointMaxPosition.X = lPrimaryScreenInfo.RCMonitor.Left;
+                lMmi.PointMaxPosition.Y = lPrimaryScreenInfo.RCMonitor.Top;
+                lMmi.PointMaxSize.X = lPrimaryScreenInfo.RCMonitor.Right;
+                lMmi.PointMaxSize.Y = lPrimaryScreenInfo.RCMonitor.Bottom;
 
-            //
-            // BUG: 
-            // NOTE: I've noticed a bug which I think is Windows itself
-            //       If your non-primary monitor has a greater width than your primary
-            //       (or possibly due to the screen ratio's being different)
-            //       then setting the max X on the monitor to the correct value causes
-            //       it to scale wrong. 
-            //
-            //       The fix seems to be to set the max width only (height is fine)
-            //       to that of the primary monitor, not the current monitor
-            //        
-            //       However, 1 pixel different and the size goes totally wrong again
-            //       so the fix doesn't work when the taskbar is on the left or right
-            //
+                // Set min size
+                var minSize = new Point(mWindow.MinWidth * mMonitorDpi.Value.DpiScaleX, mWindow.MinHeight * mMonitorDpi.Value.DpiScaleX);
+                lMmi.PointMinTrackSize.X = (int)minSize.X;
+                lMmi.PointMinTrackSize.Y = (int)minSize.Y;
+
+                // Now we have the max size, allow the host to tweak as needed
+                Marshal.StructureToPtr(lMmi, lParam, true);
+            }
 
             // Set monitor size
-            CurrentMonitorSize = new Rectangle(lMmi.PointMaxPosition.X, lMmi.PointMaxPosition.Y, lMmi.PointMaxSize.X + lMmi.PointMaxPosition.X, lMmi.PointMaxSize.Y + lMmi.PointMaxPosition.Y);
+            CurrentMonitorSize = new Rectangle(currentX, currentY, currentWidth + currentX, currentHeight + currentY);
 
-            // Set min size
-            var minSize = new Point(mWindow.MinWidth * mMonitorDpi.Value.DpiScaleX, mWindow.MinHeight * mMonitorDpi.Value.DpiScaleX);
-            lMmi.PointMinTrackSize.X = (int)minSize.X;
-            lMmi.PointMinTrackSize.Y = (int)minSize.Y;
+            // Get margin around window
+            CurrentMonitorMargin = new Thickness(
+                (lCurrentScreenInfo.RCMonitor.Left - lCurrentScreenInfo.RCWork.Left) / mMonitorDpi.Value.DpiScaleX,
+                (lCurrentScreenInfo.RCMonitor.Top - lCurrentScreenInfo.RCWork.Top) / mMonitorDpi.Value.DpiScaleY,
+                (lCurrentScreenInfo.RCMonitor.Right - lCurrentScreenInfo.RCWork.Right) / mMonitorDpi.Value.DpiScaleX,
+                (lCurrentScreenInfo.RCMonitor.Bottom - lCurrentScreenInfo.RCWork.Bottom) / mMonitorDpi.Value.DpiScaleY
+                );
 
             // Store new size
-            mScreenSize = new Rect(lCurrentScreenInfo.RCWork.Left, lCurrentScreenInfo.RCWork.Top, lMmi.PointMaxSize.X, lMmi.PointMaxSize.Y);
-
-            // Now we have the max size, allow the host to tweak as needed
-            Marshal.StructureToPtr(lMmi, lParam, true);
+            mScreenSize = new Rect(lCurrentScreenInfo.RCWork.Left, lCurrentScreenInfo.RCWork.Top, currentWidth, currentHeight);
         }
 
         /// <summary>
@@ -466,6 +484,11 @@ namespace Fasetto.Word
         {
             X = x;
             Y = y;
+        }
+
+        public override string ToString()
+        {
+            return $"{X} {Y}";
         }
     }
 
