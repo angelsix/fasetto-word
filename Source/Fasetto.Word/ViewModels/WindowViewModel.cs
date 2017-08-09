@@ -1,6 +1,4 @@
 ﻿using Fasetto.Word.Core;
-using System;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 
@@ -26,7 +24,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The margin around the window to allow for a drop shadow
         /// </summary>
-        private int mOuterMarginSize = 10;
+        private Thickness mOuterMarginSize = new Thickness(10);
 
         /// <summary>
         /// The radius of the edges of the window
@@ -65,7 +63,10 @@ namespace Fasetto.Word
         /// <summary>
         /// The size of the resize border around the window, taking into account the outer margin
         /// </summary>
-        public Thickness ResizeBorderThickness => new Thickness(ResizeBorder + OuterMarginSize);
+        public Thickness ResizeBorderThickness => new Thickness(OuterMarginSize.Left + ResizeBorder, 
+                                                                OuterMarginSize.Top + ResizeBorder,
+                                                                OuterMarginSize.Right + ResizeBorder,
+                                                                OuterMarginSize.Bottom + ResizeBorder);
 
         /// <summary>
         /// The padding of the inner content of the main window
@@ -75,17 +76,12 @@ namespace Fasetto.Word
         /// <summary>
         /// The margin around the window to allow for a drop shadow
         /// </summary>
-        public int OuterMarginSize
+        public Thickness OuterMarginSize
         {
             // If it is maximized or docked, no border
-            get => Borderless ? 0 : mOuterMarginSize;
+            get => mWindow.WindowState == WindowState.Maximized ? mWindowResizer.CurrentMonitorMargin : (Borderless ? new Thickness(0) : mOuterMarginSize);
             set => mOuterMarginSize = value;
         }
-
-        /// <summary>
-        /// The margin around the window to allow for a drop shadow
-        /// </summary>
-        public Thickness OuterMarginSizeThickness => new Thickness(OuterMarginSize);
 
         /// <summary>
         /// The radius of the edges of the window
@@ -202,7 +198,6 @@ namespace Fasetto.Word
             OnPropertyChanged(nameof(Borderless));
             OnPropertyChanged(nameof(ResizeBorderThickness));
             OnPropertyChanged(nameof(OuterMarginSize));
-            OnPropertyChanged(nameof(OuterMarginSizeThickness));
             OnPropertyChanged(nameof(WindowRadius));
             OnPropertyChanged(nameof(WindowCornerRadius));
         }
