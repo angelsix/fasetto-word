@@ -11,11 +11,13 @@
     <Grid d:DataContext="{x:Static core:ChatMessageListDesignModel.Instance}"
           VerticalAlignment="Bottom">
         <ScrollViewer VerticalScrollBarVisibility="Auto"
-                      local:ScrollToBottomOnLoadProperty.Value="True">
+                      local:ScrollToBottomOnLoadProperty.Value="True"
+                      local:AutoScrollToBottomProperty.Value="True"
+                      >
             <ItemsControl ItemsSource="{Binding Items}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <local:ChatMessageListItemControl />
+                        <local:ChatMessageListItemControl local:AnimateSlideInFromBottomOnLoadProperty.Value="{Binding NewItem}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

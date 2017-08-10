@@ -37,7 +37,6 @@ namespace Fasetto.Word
         }
     }
 
-
     /// <summary>
     /// Focuses (keyboard focus) and selects all text in this element if true
     /// </summary>
