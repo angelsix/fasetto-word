@@ -24,7 +24,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The margin around the window to allow for a drop shadow
         /// </summary>
-        private Thickness mOuterMarginSize = new Thickness(10);
+        private Thickness mOuterMarginSize = new Thickness(5);
 
         /// <summary>
         /// The radius of the edges of the window
@@ -92,6 +92,11 @@ namespace Fasetto.Word
             get => Borderless ? 0 : mWindowRadius;
             set => mWindowRadius = value;
         }
+
+        /// <summary>
+        /// The rectangle border around the window when docked
+        /// </summary>
+        public int FlatBorderThickness => Borderless && mWindow.WindowState != WindowState.Maximized ? 1 : 0;
 
         /// <summary>
         /// The radius of the edges of the window
@@ -173,6 +178,16 @@ namespace Fasetto.Word
                 // Fire off resize events
                 WindowResized();
             };
+
+            // Fix dropping an undocked window at top which should be positioned at the
+            // very top of screen
+            mWindowResizer.WindowFinishedMove += () =>
+            {
+                // Check for moved to top of window and not at an edge
+                if (mDockPosition == WindowDockPosition.Undocked && mWindow.Top == mWindowResizer.CurrentScreenSize.Top)
+                    // If so, move it to the true top (the border size)
+                    mWindow.Top = -OuterMarginSize.Top;
+            };
         }
 
         #endregion
@@ -196,6 +211,7 @@ namespace Fasetto.Word
         {
             // Fire off events for all properties that are affected by a resize
             OnPropertyChanged(nameof(Borderless));
+            OnPropertyChanged(nameof(FlatBorderThickness));
             OnPropertyChanged(nameof(ResizeBorderThickness));
             OnPropertyChanged(nameof(OuterMarginSize));
             OnPropertyChanged(nameof(WindowRadius));
