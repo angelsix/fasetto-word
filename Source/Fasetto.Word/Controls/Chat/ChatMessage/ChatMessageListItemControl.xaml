@@ -58,36 +58,68 @@
                 </Grid.Triggers>
                 
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                
-                <!-- Speech bubble rectangle -->
-                <Border CornerRadius="10"
-                    Padding="15"
-                    Background="{Binding SentByMe, Converter={local:SentByMeToBackgroundConverter}}"
-                    >
 
-                    <!-- Message text -->
-                    <TextBlock VerticalAlignment="Center"
-                           TextWrapping="Wrap"
-                           FontFamily="{StaticResource LatoRegular}"
-                           Foreground="{StaticResource WordDarkBlueBrush}"
-                           Text="{Binding Message}"
-                           />
+                <!-- Message text/attachments grid -->
+                <Grid>
 
-                </Border>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                <!-- Chat bubble anchor -->
-                <Path Grid.Row="1" 
-                      Stroke="Black"
-                      Panel.ZIndex="1"
-                      Margin="15 -1 15 0"
-                      Data="M 0,0 L 10,10 L 20,0 L 0,0" 
-                      StrokeThickness="0"
-                      HorizontalAlignment="{Binding SentByMe, Converter={local:SentByMeToAlignmentConverter}}"
-                      Fill="{Binding SentByMe, Converter={local:SentByMeToBackgroundConverter}}" />
+                    <!-- Image attachment -->
+                    <Border CornerRadius="10"
+                            Margin="0 0 0 15">
+
+                        <Image DataContext="{Binding ImageAttachment}"
+                               local:ClipFromBorderProperty.Value="True"
+                               Source="{Binding LocalFilePath}"
+                               MaxWidth="600"
+                               />
+
+                    </Border>
+                    
+                    <!-- Chat Message Text Bubble -->
+                    <Grid Grid.Row="1"
+                          Visibility="{Binding HasMessage, Converter={local:BooleanToVisiblityGoneConverter}}">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Speech bubble rectangle -->
+                        <Border CornerRadius="10"
+                                Padding="15"
+                                Background="{Binding SentByMe, Converter={local:SentByMeToBackgroundConverter}}"
+                                >
+
+                            <!-- Message text -->
+                            <TextBlock VerticalAlignment="Center"
+                                       TextWrapping="Wrap"
+                                       FontFamily="{StaticResource LatoRegular}"
+                                       Foreground="{StaticResource WordDarkBlueBrush}"
+                                       Text="{Binding Message}"
+                                       />
+
+                        </Border>
+
+                        <!-- Chat bubble anchor -->
+                        <Path Grid.Row="1" 
+                              Stroke="Black"
+                              Panel.ZIndex="1"
+                              Margin="15 -1 15 0"
+                              Data="M 0,0 L 10,10 L 20,0 L 0,0" 
+                              StrokeThickness="0"
+                              HorizontalAlignment="{Binding SentByMe, Converter={local:SentByMeToAlignmentConverter}}"
+                              Fill="{Binding SentByMe, Converter={local:SentByMeToBackgroundConverter}}" />
+
+                    </Grid>
+
+                </Grid>
 
                 <!-- Time containers -->
                 <StackPanel Name="ExtraDetails" 
