@@ -84,6 +84,11 @@ namespace Fasetto.Word
         /// </summary>
         private WindowDockPosition mLastDock = WindowDockPosition.Undocked;
 
+        /// <summary>
+        /// A flag indicating if the window is currently being moved/dragged
+        /// </summary>
+        private bool mBeingMoved = false;
+
         #endregion
 
         #region DLL Imports
@@ -98,6 +103,9 @@ namespace Fasetto.Word
         [DllImport("user32.dll", SetLastError = true)]
         static extern IntPtr MonitorFromPoint(POINT pt, MonitorOptions dwFlags);
 
+        [DllImport("user32.dll")]
+        static extern IntPtr MonitorFromWindow(IntPtr hwnd, MonitorOptions dwFlags);
+
         #endregion
 
         #region Public Events
@@ -106,6 +114,11 @@ namespace Fasetto.Word
         /// Called when the window dock position changes
         /// </summary>
         public event Action<WindowDockPosition> WindowDockChanged = (dock) => { };
+
+        /// <summary>
+        /// Called when the window starts being moved/dragged
+        /// </summary>
+        public event Action WindowStartedMove = () => { };
 
         /// <summary>
         /// Called when the window has been moved/dragged and then finished
@@ -286,8 +299,15 @@ namespace Fasetto.Word
                     handled = true;
                     break;
 
+                // Once the window starts being moved
+                case 0x0231: // WM_ENTERSIZEMOVE
+                    mBeingMoved = true;
+                    WindowStartedMove();
+                    break;
+
                 // Once the window has finished being moved
                 case 0x0232: // WM_EXITSIZEMOVE
+                    mBeingMoved = false;
                     WindowFinishedMove();
                     break;
             }
@@ -309,7 +329,13 @@ namespace Fasetto.Word
             GetCursorPos(out POINT lMousePosition);
 
             // Now get the current screen
-            var lCurrentScreen = MonitorFromPoint(lMousePosition, MonitorOptions.MONITOR_DEFAULTTONEAREST);
+            var lCurrentScreen = mBeingMoved ?
+                // If being dragged get it from the mouse position
+                MonitorFromPoint(lMousePosition, MonitorOptions.MONITOR_DEFAULTTONEAREST) : 
+                // Otherwise get it from the window position (for example being moved via Win + Arrow)
+                // in case the mouse is on another monitor
+                MonitorFromWindow(hwnd, MonitorOptions.MONITOR_DEFAULTTONEAREST);
+
             var lPrimaryScreen = MonitorFromPoint(new POINT(0,0), MonitorOptions.MONITOR_DEFAULTTOPRIMARY);
 
             // Try and get the current screen information
