@@ -110,7 +110,8 @@ namespace Fasetto.Word
             await Task.Delay((int)(seconds * 1000));
 
             // Make element invisible
-            element.Visibility = Visibility.Hidden;
+            if (element.Opacity == 0)
+                element.Visibility = Visibility.Hidden;
         }
 
         #endregion

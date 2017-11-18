@@ -24,9 +24,15 @@
                     <ControlTemplate TargetType="{x:Type Window}">
                         <!-- Outer border with the drop shadow margin -->
                         <Border Padding="{Binding OuterMarginSize, FallbackValue=0}" BorderBrush="{StaticResource ForegroundDarkBrush}" BorderThickness="{Binding FlatBorderThickness}">
-                            
+
                             <!-- Main window outline -->
                             <Grid>
+
+                                <!-- Outer dragging border -->
+                                <Border BorderThickness="{Binding BeingMoved, Converter={local:BooleanToBorderThicknessConverter}}"
+                                        Panel.ZIndex="2"
+                                        CornerRadius="{Binding WindowCornerRadius, FallbackValue=10}"
+                                        BorderBrush="{StaticResource WordOrangeBrush}" />
 
                                 <!-- Opacity mask for corners on grid -->
                                 <Border x:Name="Container"
@@ -43,14 +49,14 @@
 
                                 <!-- The main window content -->
                                 <Grid>
-                                    
+
                                     <!-- Corner clipping -->
                                     <Grid.OpacityMask>
                                         <VisualBrush Visual="{Binding ElementName=Container}" />
                                     </Grid.OpacityMask>
-                                    
+
                                     <Grid.RowDefinitions>
-                                    
+
                                         <!-- Title Bar -->
                                         <RowDefinition Height="{Binding TitleHeightGridLength, FallbackValue=42}" />
 
@@ -58,7 +64,7 @@
                                         <RowDefinition Height="*" />
 
                                     </Grid.RowDefinitions>
-                                    
+
                                     <!-- Title Bar -->
                                     <Grid Grid.Column="0" Panel.ZIndex="1">
 
@@ -100,9 +106,9 @@
                                     <Border Grid.Row="1" Padding="{Binding InnerContentPadding}" ClipToBounds="True">
                                         <ContentPresenter Content="{TemplateBinding Content}" />
                                     </Border>
-                                    
+
                                 </Grid>
-                                
+
                             </Grid>
                         </Border>
                     </ControlTemplate>
