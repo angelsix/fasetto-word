@@ -27,6 +27,12 @@ dotnet_style_qualification_for_event = false:error
 dotnet_style_predefined_type_for_locals_parameters_members = true:error
 dotnet_style_predefined_type_for_member_access = true:error
 
+# Require access modifiers all the time (i.e. private void Function(), not just void Function())
+dotnet_style_require_accessibility_modifiers = always:error
+
+# Force order of modifiers 
+csharp_preferred_modifier_order = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async:error
+
 # Prefer "var" everywhere
 csharp_style_var_for_built_in_types = true:error
 csharp_style_var_when_type_is_apparent = true:error
@@ -45,6 +51,19 @@ csharp_style_expression_bodied_accessors = true:error
 # Force objects to initialize their members inside {} on construction
 dotnet_style_object_initializer = true:error
 dotnet_style_collection_initializer = true:error
+
+# Use tuple explicit names not the Item1, Item2 properties
+dotnet_style_explicit_tuple_names = true:error
+
+# Force expression coalescing 
+#             var a = x ?? y;
+# instead of: var a = x == null ? y : x;
+dotnet_style_coalesce_expression = true:error
+
+# Force null propagation
+#             var s = o?.ToString()
+# instead of: var s = o == null ? null : o.ToString()
+dotnet_style_null_propagation = true:error
 
 # Force pattern matching over cast checking
 #               if (o is int i)
@@ -74,15 +93,31 @@ csharp_style_throw_expression = true:error
 # instead of: if (func != null) func();
 csharp_style_conditional_delegate_call = true:error
 
-# Force expression coalescing 
-#             var a = x ?? y;
-# instead of: var a = x == null ? y : x;
-dotnet_style_coalesce_expression = true:error
+# Prefer no braces for one liner if's
+# NOTE: Just show as warning as some one-liners just look better with braces
+#       if it has a lot of parameters
+csharp_prefer_braces = false:warning
 
-# Force null propagation
-#             var s = o?.ToString()
-# instead of: var s = o == null ? null : o.ToString()
-dotnet_style_null_propagation = true:error
+#
+# EXPRESSION LEVEL PREFERENCES
+#
+#
+
+# Prefer int a = default; instead of int a = default(int)
+csharp_prefer_simple_default_expression = true:error
+
+# Prefer using var for a tuple instead of deconstructed tuple
+# false = var person = GetPersonTuple()
+# false = var (name, age) = GetPersonTuple()
+csharp_style_deconstructed_variable_declaration = false:error
+
+# Prefer local functions over anonymous functions
+# NOTE: Right now I have no preference so ingnore this
+# true = int fibonacci(int n) { return n <= 1 ? 1 : fibonacci(n-1) + fibonacci(n-2); }
+# false = Func<int, int> fibonacci = null;
+#         fibonacci = (int n) => {} return n <= 1 ? 1 : fibonacci(n - 1) + fibonacci(n - 2); };
+# csharp_style_pattern_local_over_anonymous_function = false:error
+
 
 #
 # NAMING CONVENTIONS
