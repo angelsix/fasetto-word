@@ -54,10 +54,16 @@ namespace Fasetto.Word.Core
         /// <summary>
         /// Default constructor
         /// </summary>
-        public BaseLogFactory()
+        /// <param name="loggers">The loggers to add to the factory, on top of the stock loggers already included</param>
+        public BaseLogFactory(ILogger[] loggers = null)
         {
             // Add console logger
             AddLogger(new DebugLogger());
+
+            // Add any others passed in
+            if (loggers != null)
+                foreach (var logger in loggers)
+                    AddLogger(logger);
         }
 
         #endregion
@@ -119,8 +125,12 @@ namespace Fasetto.Word.Core
             if (IncludeLogOriginDetails)
                 message = $"{message} [{Path.GetFileName(filePath)} > {origin}() > Line {lineNumber}]";
 
-            // Log to all loggers
-            mLoggers.ForEach(logger => logger.Log(message, level));
+            // Log the list so it is thread-safe
+            lock (mLoggersLock)
+            {
+                // Log to all loggers
+                mLoggers.ForEach(logger => logger.Log(message, level));
+            }
 
             // Inform listeners
             NewLog.Invoke((message, level));
