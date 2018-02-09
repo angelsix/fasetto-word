@@ -311,10 +311,6 @@
     <Resource Include="Images\Backgrounds\emoji-background.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\dna-framework\Source\Dna.Framework\Dna.Framework.csproj">
-      <Project>{add7d2b3-7746-470d-8bab-425963e604c8}</Project>
-      <Name>Dna.Framework</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Fasetto.Word.Core\Fasetto.Word.Core.csproj">
       <Project>{cac0a047-d879-4a29-8136-be1e33f5f35c}</Project>
       <Name>Fasetto.Word.Core</Name>
@@ -324,8 +320,11 @@
     <Resource Include="Images\Samples\rusty.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Dna.Framework">
+      <Version>1.0.0</Version>
+    </PackageReference>
     <PackageReference Include="Fody">
-      <Version>2.3.25</Version>
+      <Version>2.4.0</Version>
     </PackageReference>
     <PackageReference Include="Ninject">
       <Version>3.3.4</Version>
