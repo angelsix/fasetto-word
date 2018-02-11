@@ -321,10 +321,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Dna.Framework">
-      <Version>1.0.0</Version>
+      <Version>1.0.1</Version>
     </PackageReference>
     <PackageReference Include="Fody">
-      <Version>2.4.0</Version>
+      <Version>2.4.1</Version>
     </PackageReference>
     <PackageReference Include="Ninject">
       <Version>3.3.4</Version>
