@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,7 +61,11 @@ namespace Fasetto.Word.Web.Server
                 options.ExpireTimeSpan = TimeSpan.FromSeconds(15);
             });
 
-            services.AddMvc();
+            services.AddMvc(options =>
+            {
+                //options.InputFormatters.Add(new XmlSerializerInputFormatter());
+                //options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
