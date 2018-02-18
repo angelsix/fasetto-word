@@ -47,11 +47,16 @@ namespace Fasetto.Word.Core
             // Set the view model
             CurrentPageViewModel = viewModel;
 
+            // See if page has changed
+            var different = CurrentPage != page;
+
             // Set the current page
             CurrentPage = page;
 
-            // Fire off a CurrentPage changed event
-            OnPropertyChanged(nameof(CurrentPage));
+            // If the page hasn't changed, fire off notification
+            // So pages still update if just the view model has changed
+            if (!different)
+                OnPropertyChanged(nameof(CurrentPage));
 
             // Show side menu or not?
             SideMenuVisible = page == ApplicationPage.Chat;

@@ -76,7 +76,7 @@ namespace Fasetto.Word
         private static object CurrentPagePropertyChanged(DependencyObject d, object value)
         {
             // Get current values
-            var currentPage = (ApplicationPage)d.GetValue(CurrentPageProperty);
+            var currentPage = (ApplicationPage)value;
             var currentPageViewModel = d.GetValue(CurrentPageViewModelProperty);
 
             // Get the frames
