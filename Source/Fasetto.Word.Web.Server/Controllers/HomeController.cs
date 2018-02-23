@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Fasetto.Word.Web.Server
 {
+    /// <summary>
+    /// Manages the standard web server pages
+    /// </summary>
     public class HomeController : Controller
     {
         #region Protected Members
