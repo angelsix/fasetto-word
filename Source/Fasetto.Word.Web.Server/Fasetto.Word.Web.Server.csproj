@@ -22,4 +22,8 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Fasetto.Word.Core\Fasetto.Word.Core.csproj" />
+  </ItemGroup>
+
 </Project>

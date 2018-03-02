@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using Fasetto.Word.Core;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Fasetto.Word.Web.Server
 {
@@ -15,17 +15,100 @@ namespace Fasetto.Word.Web.Server
     /// </summary>
     public class ApiController : Controller
     {
+        #region Protected Members
+
+        /// <summary>
+        /// The scoped Application context
+        /// </summary>
+        protected ApplicationDbContext mContext;
+
+        /// <summary>
+        /// The manager for handling user creation, deletion, searching, roles etc...
+        /// </summary>
+        protected UserManager<ApplicationUser> mUserManager;
+
+        /// <summary>
+        /// The manager for handling signing in and out for our users
+        /// </summary>
+        protected SignInManager<ApplicationUser> mSignInManager;
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        /// <param name="context">The injected context</param>
+        /// <param name="signInManager">The Identity sign in manager</param>
+        /// <param name="userManager">The Identity user manager</param>
+        public ApiController(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager)
+        {
+            mContext = context;
+            mUserManager = userManager;
+            mSignInManager = signInManager;
+        }
+
+        #endregion
+
         /// <summary>
         /// Logs in a user using token-based authentication
         /// </summary>
         /// <returns></returns>
         [Route("api/login")]
-        public IActionResult LogIn()
+        public async Task<ApiResponse<LoginResultApiModel>> LogInAsync([FromBody]LoginCredentialsApiModel loginCredentials)
         {
-            // TODO: Get users login information and check it is correct
+            // TODO: Localize all strings
+            // The message when we fail to login
+            var invalidErrorMessage = "Invalid username or password";
 
-            // For now set username
-            var username = "angelsix";
+            // The error response for a failed login
+            var errorResponse = new ApiResponse<LoginResultApiModel>
+            {
+                // Set error message
+                ErrorMessage = invalidErrorMessage
+            };
+
+            // Make sure we have a user name
+            if (loginCredentials?.UsernameOrEmail == null || string.IsNullOrWhiteSpace(loginCredentials.UsernameOrEmail))
+                // Return error message to user
+                return errorResponse;
+
+            // Validate if the user credentials are correct...
+
+            // Is it an email?
+            var isEmail = loginCredentials.UsernameOrEmail.Contains("@");
+
+            // Get the user details
+            var user = isEmail ? 
+                // Find by email
+                await mUserManager.FindByEmailAsync(loginCredentials.UsernameOrEmail) : 
+                // Find by username
+                await mUserManager.FindByNameAsync(loginCredentials.UsernameOrEmail);
+
+            // If we failed to find a user...
+            if (user == null)
+                // Return error message to user
+                return errorResponse;
+
+            // If we got here we have a user...
+            // Let's validate the password
+
+            // Get if password is valid
+            var isValidPassword = await mUserManager.CheckPasswordAsync(user, loginCredentials.Password);
+
+            // If the password was wrong
+            if (!isValidPassword)
+                // Return error message to user
+                return errorResponse;
+
+            // If we get here, we are valid and the user passed the correct login details
+
+            // Get username
+            var username = user.UserName;
 
             // Set our tokens claims
             var claims = new[]
@@ -55,10 +138,18 @@ namespace Fasetto.Word.Web.Server
                 );
 
             // Return token to user
-            return Ok(new
+            return new ApiResponse<LoginResultApiModel>
             {
-                token = new JwtSecurityTokenHandler().WriteToken(token)
-            });
+                // Pass back the user details and the token
+                Response = new LoginResultApiModel
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Username = user.UserName,
+                    Token = new JwtSecurityTokenHandler().WriteToken(token)
+                }
+            };
         }
 
         /// <summary>

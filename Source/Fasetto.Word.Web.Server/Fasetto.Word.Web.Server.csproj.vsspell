@@ -6,8 +6,11 @@
   <SelectedLanguages />
   <InheritIgnoredWords>True</InheritIgnoredWords>
   <IgnoredWords>
+    <Ignore>angelsix</Ignore>
     <Ignore>api</Ignore>
+    <Ignore>malpass</Ignore>
     <Ignore>username</Ignore>
+    <Ignore>html</Ignore>
   </IgnoredWords>
   <InheritExclusionExpressions>True</InheritExclusionExpressions>
   <InheritIgnoredFilePatterns>True</InheritIgnoredFilePatterns>

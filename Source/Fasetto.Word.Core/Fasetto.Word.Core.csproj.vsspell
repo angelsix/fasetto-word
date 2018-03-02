@@ -7,6 +7,8 @@
   <InheritIgnoredWords>True</InheritIgnoredWords>
   <IgnoredWords>
     <Ignore>prepend</Ignore>
+    <Ignore>username</Ignore>
+    <Ignore>deserialize</Ignore>
   </IgnoredWords>
   <InheritExclusionExpressions>True</InheritExclusionExpressions>
   <InheritIgnoredFilePatterns>True</InheritIgnoredFilePatterns>
