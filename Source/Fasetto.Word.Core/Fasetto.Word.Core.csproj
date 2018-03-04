@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dna.Framework" Version="1.0.2" />
+    <PackageReference Include="Dna.Framework" Version="1.0.3" />
     <PackageReference Include="Fody" Version="2.4.4" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
     <PackageReference Include="Ninject" Version="3.3.4" />

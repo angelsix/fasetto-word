@@ -290,6 +290,7 @@
     <None Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Fasetto.Word.csproj.vsspell" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -315,22 +316,29 @@
       <Project>{cac0a047-d879-4a29-8136-be1e33f5f35c}</Project>
       <Name>Fasetto.Word.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Fasetto.Word.Relational\Fasetto.Word.Relational.csproj">
+      <Project>{95bce913-1777-4823-acd3-b9a853117f1e}</Project>
+      <Name>Fasetto.Word.Relational</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Samples\rusty.jpg" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Dna.Framework">
-      <Version>1.0.2</Version>
+      <Version>1.0.3</Version>
     </PackageReference>
     <PackageReference Include="Fody">
-      <Version>2.4.1</Version>
+      <Version>2.4.4</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite">
+      <Version>2.0.1</Version>
     </PackageReference>
     <PackageReference Include="Ninject">
       <Version>3.3.4</Version>
     </PackageReference>
     <PackageReference Include="PropertyChanged.Fody">
-      <Version>2.2.5</Version>
+      <Version>2.2.9</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -109,10 +109,18 @@ namespace Fasetto.Word.Core
                 // OK successfully logged in... now get users data
                 var userData = result.ServerResponse.Response;
 
-                IoC.Settings.Name = new TextEntryViewModel { Label = "Name", OriginalText = $"{userData.FirstName} {userData.LastName}" };
-                IoC.Settings.Username = new TextEntryViewModel { Label = "Username", OriginalText = userData.Username };
-                IoC.Settings.Password = new PasswordEntryViewModel { Label = "Password", FakePassword = "********" };
-                IoC.Settings.Email = new TextEntryViewModel { Label = "Email", OriginalText = userData.Email };
+                // Store this in the client data store
+                await IoC.ClientDataStore.SaveLoginCredentialsAsync(new LoginCredentialsDataModel
+                {
+                    Email = userData.Email,
+                    FirstName = userData.FirstName,
+                    LastName = userData.LastName,
+                    Username = userData.Username,
+                    Token = userData.Token
+                });
+
+                // Load new settings
+                await IoC.Settings.LoadAsync();
 
                 // Go to chat page
                 IoC.Application.GoToPage(ApplicationPage.Chat);
