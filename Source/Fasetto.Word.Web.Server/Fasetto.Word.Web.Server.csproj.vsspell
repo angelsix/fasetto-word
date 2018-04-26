@@ -8,9 +8,12 @@
   <IgnoredWords>
     <Ignore>angelsix</Ignore>
     <Ignore>api</Ignore>
-    <Ignore>malpass</Ignore>
-    <Ignore>username</Ignore>
+    <Ignore>deserialize</Ignore>
     <Ignore>html</Ignore>
+    <Ignore>malpass</Ignore>
+    <Ignore>templated</Ignore>
+    <Ignore>username</Ignore>
+    <Ignore>Fasetto</Ignore>
   </IgnoredWords>
   <InheritExclusionExpressions>True</InheritExclusionExpressions>
   <InheritIgnoredFilePatterns>True</InheritIgnoredFilePatterns>

@@ -53,8 +53,8 @@ namespace Fasetto.Word
         {
             // Setup the Dna Framework
             new DefaultFrameworkConstruction()
-                .UseFileLogger()
-                .UseClientDataStore()
+                .AddFileLogger()
+                .AddClientDataStore()
                 .Build();
 
             // Setup IoC

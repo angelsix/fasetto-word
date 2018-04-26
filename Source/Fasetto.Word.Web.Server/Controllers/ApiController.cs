@@ -8,6 +8,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Fasetto.Word.Web.Server
 {
@@ -103,9 +104,13 @@ namespace Fasetto.Word.Web.Server
                 var userIdentity = await mUserManager.FindByNameAsync(registerCredentials.Username);
 
                 // Generate an email verification code
-                var emailVerificationCode = mUserManager.GenerateEmailConfirmationTokenAsync(user);
+                var emailVerificationCode = await mUserManager.GenerateEmailConfirmationTokenAsync(user);
 
-                // TODO: Email the user the verification code
+                // TODO: Replace with APIRoutes that will contain the static routes to use
+                var confirmationUrl = $"http://{Request.Host.Value}/api/verify/email/{HttpUtility.UrlEncode(userIdentity.Id)}/{HttpUtility.UrlEncode(emailVerificationCode)}";
+
+                // Email the user the verification code
+                await FasettoEmailSender.SendUserVerificationEmailAsync(null, userIdentity.Email, confirmationUrl);
 
                 // Return valid response containing all users details
                 return new ApiResponse<RegisterResultApiModel>
@@ -201,6 +206,38 @@ namespace Fasetto.Word.Web.Server
                     Token = user.GenerateJwtToken()
                 }
             };
+        }
+
+        [Route("api/verify/email/{userId}/{emailToken}")]
+        [HttpGet]
+        public async Task<ActionResult> VerifyEmailAsync(string userId, string emailToken)
+        {
+            // Get the user
+            var user = await mUserManager.FindByIdAsync(userId);
+
+            // NOTE: Issue at the minute with Url Decoding that contains /'s does not replace them
+            //       https://github.com/aspnet/Home/issues/2669
+            //       
+            //       For now, manually fix that
+            emailToken = emailToken.Replace("%2f", "/").Replace("%2F", "/");
+
+            // If the user is null
+            if (user == null)
+                // TODO: Nice UI
+                return Content("User not found");
+
+            // If we have the user...
+
+            // Verify the email token
+            var result = await mUserManager.ConfirmEmailAsync(user, emailToken);
+
+            // If succeeded...
+            if (result.Succeeded)
+                // TODO: Nice UI
+                return Content("Email Verified :)");
+
+            // TODO: Nice UI
+            return Content("Invalid Email Verification Token :(");
         }
 
         /// <summary>
