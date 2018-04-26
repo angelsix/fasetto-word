@@ -110,7 +110,7 @@ namespace Fasetto.Word.Web.Server
                 var confirmationUrl = $"http://{Request.Host.Value}/api/verify/email/{HttpUtility.UrlEncode(userIdentity.Id)}/{HttpUtility.UrlEncode(emailVerificationCode)}";
 
                 // Email the user the verification code
-                await FasettoEmailSender.SendUserVerificationEmailAsync(null, userIdentity.Email, confirmationUrl);
+                await FasettoEmailSender.SendUserVerificationEmailAsync(user.UserName, userIdentity.Email, confirmationUrl);
 
                 // Return valid response containing all users details
                 return new ApiResponse<RegisterResultApiModel>
