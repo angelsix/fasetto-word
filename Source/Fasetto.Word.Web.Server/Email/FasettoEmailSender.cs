@@ -1,5 +1,6 @@
 ﻿using Fasetto.Word.Core;
 using System.Threading.Tasks;
+using static Dna.FrameworkDI;
 
 namespace Fasetto.Word.Web.Server
 {
@@ -17,11 +18,11 @@ namespace Fasetto.Word.Web.Server
         /// <returns></returns>
         public static async Task<SendEmailResponse> SendUserVerificationEmailAsync(string displayName, string email, string verificationUrl)
         {
-            return await IoC.EmailTemplateSender.SendGeneralEmailAsync(new SendEmailDetails
+            return await DI.EmailTemplateSender.SendGeneralEmailAsync(new SendEmailDetails
             {
                 IsHTML = true,
-                FromEmail = IoCContainer.Configuration["FasettoSettings:SendEmailFromEmail"],
-                FromName = IoCContainer.Configuration["FasettoSettings:SendEmailFromName"],
+                FromEmail = Configuration["FasettoSettings:SendEmailFromEmail"],
+                FromName = Configuration["FasettoSettings:SendEmailFromName"],
                 ToEmail = email,
                 ToName = displayName,
                 Subject = "Verify Your Email - Fasetto Word"

@@ -3,6 +3,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using static Dna.FrameworkDI;
 
 namespace Fasetto.Word.Web.Server
 {
@@ -31,14 +32,14 @@ namespace Fasetto.Word.Web.Server
             // Create the credentials used to generate the token
             var credentials = new SigningCredentials(
                 // Get the secret key from configuration
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(IoCContainer.Configuration["Jwt:SecretKey"])),
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:SecretKey"])),
                 // Use HS256 algorithm
                 SecurityAlgorithms.HmacSha256);
 
             // Generate the Jwt Token
             var token = new JwtSecurityToken(
-                issuer: IoCContainer.Configuration["Jwt:Issuer"],
-                audience: IoCContainer.Configuration["Jwt:Audience"],
+                issuer: Configuration["Jwt:Issuer"],
+                audience: Configuration["Jwt:Audience"],
                 claims: claims,
                 signingCredentials: credentials,
                 // Expire if not used for 3 months
