@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="300">
 
-    <Grid d:DataContext="{x:Static core:ChatMessageListDesignModel.Instance}"
+    <Grid d:DataContext="{x:Static local:ChatMessageListDesignModel.Instance}"
           VerticalAlignment="Bottom">
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       local:ScrollToBottomOnLoadProperty.Value="True"

@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Fasetto.Word"
             xmlns:core="clr-namespace:Fasetto.Word.Core;assembly=Fasetto.Word.Core"
              mc:Ignorable="d">
-    <StackPanel d:DataContext="{x:Static core:MessageBoxDialogDesignModel.Instance}"
+    <StackPanel d:DataContext="{x:Static local:MessageBoxDialogDesignModel.Instance}"
                 Background="{StaticResource ForegroundLightBrush}"
                 >
         <TextBlock Text="{Binding Message}"

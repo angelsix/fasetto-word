@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Fasetto.Word"
              xmlns:core="clr-namespace:Fasetto.Word.Core;assembly=Fasetto.Word.Core"
              mc:Ignorable="d" 
-             d:DataContext="{x:Static core:TextEntryDesignModel.Instance}">
+             d:DataContext="{x:Static local:TextEntryDesignModel.Instance}">
     
     <!-- Grey underline -->
     <Border BorderBrush="{StaticResource ForegroundDarkBrush}"

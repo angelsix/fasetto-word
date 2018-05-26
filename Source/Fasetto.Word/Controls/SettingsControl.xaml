@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Fasetto.Word"
              xmlns:core="clr-namespace:Fasetto.Word.Core;assembly=Fasetto.Word.Core"
-             d:DataContext="{x:Static core:SettingsDesignModel.Instance}"
+             d:DataContext="{x:Static local:SettingsDesignModel.Instance}"
              mc:Ignorable="d" >
     <Border Background="{StaticResource ForegroundLightBrush}" 
             Padding="15">

@@ -119,7 +119,10 @@
     <Compile Include="Dialogs\DialogMessageBox.xaml.cs">
       <DependentUpon>DialogMessageBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IoC\UIManager.cs" />
+    <Compile Include="DI\DI.cs" />
+    <Compile Include="DI\FrameworkConstructionExtensions.cs" />
+    <Compile Include="DI\UI\IUIManager.cs" />
+    <Compile Include="DI\UI\UIManager.cs" />
     <Compile Include="DialogWindow.xaml.cs">
       <DependentUpon>DialogWindow.xaml</DependentUpon>
     </Compile>
@@ -148,9 +151,42 @@
     <Compile Include="ValueConverters\TimeToDisplayTimeConverter.cs" />
     <Compile Include="ValueConverters\HorizontalAlignmentConverter.cs" />
     <Compile Include="ValueConverters\TimeToReadTimeConverter.cs" />
-    <Compile Include="ViewModels\DialogWindowViewModel.cs" />
-    <Compile Include="ViewModels\ViewModelLocator.cs" />
-    <Compile Include="ViewModels\WindowViewModel.cs" />
+    <Compile Include="WebRequests\WebRequestResultExtensions.cs" />
+    <Compile Include="WPFViewModels\DialogWindowViewModel.cs" />
+    <Compile Include="WPFViewModels\ViewModelLocator.cs" />
+    <Compile Include="WPFViewModels\WindowViewModel.cs" />
+    <Compile Include="ViewModel\Application\ApplicationViewModel.cs" />
+    <Compile Include="ViewModel\Application\Design\SettingsDesignModel.cs" />
+    <Compile Include="ViewModel\Application\LoginViewModel.cs" />
+    <Compile Include="ViewModel\Application\RegisterViewModel.cs" />
+    <Compile Include="ViewModel\Application\SettingsViewModel.cs" />
+    <Compile Include="ViewModel\Base\BaseViewModel.cs" />
+    <Compile Include="ViewModel\Base\IHavePassword.cs" />
+    <Compile Include="ViewModel\Base\RelayCommand.cs" />
+    <Compile Include="ViewModel\Base\RelayParameterizedCommand.cs" />
+    <Compile Include="ViewModel\Chat\ChatList\ChatListItemViewModel.cs" />
+    <Compile Include="ViewModel\Chat\ChatList\ChatListViewModel.cs" />
+    <Compile Include="ViewModel\Chat\ChatList\Design\ChatListDesignModel.cs" />
+    <Compile Include="ViewModel\Chat\ChatList\Design\ChatListItemDesignModel.cs" />
+    <Compile Include="ViewModel\Chat\ChatMessage\ChatMessageListItemImageAttachmentViewModel.cs" />
+    <Compile Include="ViewModel\Chat\ChatMessage\ChatMessageListItemViewModel.cs" />
+    <Compile Include="ViewModel\Chat\ChatMessage\ChatMessageListViewModel.cs" />
+    <Compile Include="ViewModel\Chat\ChatMessage\Design\ChatMessageListDesignModel.cs" />
+    <Compile Include="ViewModel\Chat\ChatMessage\Design\ChatMessageListItemDesignModel.cs" />
+    <Compile Include="ViewModel\Dialogs\BaseDialogViewModel.cs" />
+    <Compile Include="ViewModel\Dialogs\Design\MessageBoxDialogDesignModel.cs" />
+    <Compile Include="ViewModel\Dialogs\MessageBoxDialogViewModel.cs" />
+    <Compile Include="ViewModel\Input\Design\PasswordEntryDesignModel.cs" />
+    <Compile Include="ViewModel\Input\Design\TextEntryDesignModel.cs" />
+    <Compile Include="ViewModel\Input\PasswordEntryViewModel.cs" />
+    <Compile Include="ViewModel\Input\TextEntryViewModel.cs" />
+    <Compile Include="ViewModel\Menu\Design\MenuDesignModel.cs" />
+    <Compile Include="ViewModel\Menu\Design\MenuItemDesignModel.cs" />
+    <Compile Include="ViewModel\Menu\MenuItemViewModel.cs" />
+    <Compile Include="ViewModel\Menu\MenuViewModel.cs" />
+    <Compile Include="ViewModel\PopupMenu\BasePopupViewModel.cs" />
+    <Compile Include="ViewModel\PopupMenu\ChatAttachmentPopupMenuViewModel.cs" />
+    <Compile Include="ViewModel\PopupMenu\Design\ChatAttachmentPopupMenuDesignModel.cs" />
     <Compile Include="Window\WindowResizer.cs" />
     <Page Include="Controls\BubbleContent.xaml">
       <SubType>Designer</SubType>
@@ -326,19 +362,16 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Dna.Framework">
-      <Version>1.0.5</Version>
+      <Version>1.0.7</Version>
     </PackageReference>
     <PackageReference Include="Fody">
       <Version>3.0.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite">
-      <Version>2.0.2</Version>
-    </PackageReference>
-    <PackageReference Include="Ninject">
-      <Version>3.3.4</Version>
+      <Version>2.0.3</Version>
     </PackageReference>
     <PackageReference Include="PropertyChanged.Fody">
-      <Version>2.5.4</Version>
+      <Version>2.5.6</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

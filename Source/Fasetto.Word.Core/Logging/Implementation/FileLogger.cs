@@ -46,7 +46,7 @@ namespace Fasetto.Word.Core
             var timeLogString = LogTime ? $"[{ currentTime}] " : "";
 
             // Write the message
-            IoC.File.WriteTextToFileAsync($"{timeLogString}{message}{Environment.NewLine}", FilePath, append: true);
+            CoreDI.FileManager.WriteTextToFileAsync($"{timeLogString}{message}{Environment.NewLine}", FilePath, append: true);
         }
 
         #endregion
