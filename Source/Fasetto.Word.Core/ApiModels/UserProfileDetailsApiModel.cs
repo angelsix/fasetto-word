@@ -46,5 +46,26 @@
         }
 
         #endregion
+
+        #region Public Helper Methods
+
+        /// <summary>
+        /// Creates a new <see cref="LoginCredentialsDataModel"/>
+        /// from this model
+        /// </summary>
+        /// <returns></returns>
+        public LoginCredentialsDataModel ToLoginCredentialsDataModel()
+        {
+            return new LoginCredentialsDataModel
+            {
+                Email = Email,
+                FirstName = FirstName,
+                LastName = LastName,
+                Username = Username,
+                Token = Token
+            };
+        }
+
+        #endregion
     }
 }

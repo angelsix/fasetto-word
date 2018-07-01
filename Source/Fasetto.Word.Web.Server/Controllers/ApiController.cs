@@ -246,6 +246,7 @@ namespace Fasetto.Word.Web.Server
         /// Returns the users profile details based on the authenticated user
         /// </summary>
         /// <returns></returns>
+        [Route("api/user/profile")]
         public async Task<ApiResponse<UserProfileDetailsApiModel>> GetUserProfileAsync()
         {
             // Get user claims
@@ -282,6 +283,7 @@ namespace Fasetto.Word.Web.Server
         ///     Returns successful response if the update was successful, 
         ///     otherwise returns the error reasons for the failure
         /// </returns>
+        [Route("api/user/profile/update")]
         public async Task<ApiResponse> UpdateUserProfileAsync([FromBody]UpdateUserProfileApiModel model)
         {
             #region Declare Variables
