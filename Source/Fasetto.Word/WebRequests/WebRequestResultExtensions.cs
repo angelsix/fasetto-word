@@ -37,7 +37,7 @@ namespace Fasetto.Word
                 // If we have a result but no server response details at all...
                 else if (response != null)
                     // Set message to standard HTTP server response details
-                    message = response.ErrorMessage ?? $"{response.StatusDescription} ({response.StatusCode})";
+                    message = response.ErrorMessage ?? $"Server responded with {response.StatusDescription} ({response.StatusCode})";
 
                 // Display error
                 await UI.ShowMessage(new MessageBoxDialogViewModel
