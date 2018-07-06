@@ -326,7 +326,7 @@ namespace Fasetto.Word
         private void WmGetMinMaxInfo(System.IntPtr hwnd, System.IntPtr lParam)
         {
             // Get the point position to determine what screen we are on
-            GetCursorPos(out POINT lMousePosition);
+            GetCursorPos(out var lMousePosition);
 
             // Now get the current screen
             var lCurrentScreen = mBeingMoved ?
@@ -396,7 +396,7 @@ namespace Fasetto.Word
                 // NOTE: rcMonitor is the monitor size
                 //       rcWork is the available screen size (so the area inside the task bar start menu for example)
 
-                // Size size limits (used by Windows when maximized)
+                // Size limits (used by Windows when maximized)
                 // relative to 0,0 being the current screens top-left corner
 
                 // Set to primary monitor size
@@ -419,8 +419,8 @@ namespace Fasetto.Word
 
             // Get margin around window
             CurrentMonitorMargin = new Thickness(
-                (lCurrentScreenInfo.RCMonitor.Left - lCurrentScreenInfo.RCWork.Left) / mMonitorDpi.Value.DpiScaleX,
-                (lCurrentScreenInfo.RCMonitor.Top - lCurrentScreenInfo.RCWork.Top) / mMonitorDpi.Value.DpiScaleY,
+                (lCurrentScreenInfo.RCWork.Left - lCurrentScreenInfo.RCMonitor.Left) / mMonitorDpi.Value.DpiScaleX,
+                (lCurrentScreenInfo.RCWork.Top - lCurrentScreenInfo.RCMonitor.Top) / mMonitorDpi.Value.DpiScaleY,
                 (lCurrentScreenInfo.RCMonitor.Right - lCurrentScreenInfo.RCWork.Right) / mMonitorDpi.Value.DpiScaleX,
                 (lCurrentScreenInfo.RCMonitor.Bottom - lCurrentScreenInfo.RCWork.Bottom) / mMonitorDpi.Value.DpiScaleY
                 );
@@ -436,7 +436,7 @@ namespace Fasetto.Word
         public Point GetCursorPosition()
         {
             // Get mouse position
-            GetCursorPos(out POINT lMousePosition);
+            GetCursorPos(out var lMousePosition);
 
             // Apply DPI scaling
             return new Point(lMousePosition.X / mMonitorDpi.Value.DpiScaleX, lMousePosition.Y / mMonitorDpi.Value.DpiScaleY);
@@ -445,7 +445,7 @@ namespace Fasetto.Word
 
     #region DLL Helper Structures
 
-    enum MonitorOptions : uint
+    public enum MonitorOptions : uint
     {
         MONITOR_DEFAULTTONULL = 0x00000000,
         MONITOR_DEFAULTTOPRIMARY = 0x00000001,

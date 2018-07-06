@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Fasetto.Word"
              xmlns:core="clr-namespace:Fasetto.Word.Core;assembly=Fasetto.Word.Core"
              mc:Ignorable="d">
-    <ItemsControl d:DataContext="{x:Static core:MenuDesignModel.Instance}"
+    <ItemsControl d:DataContext="{x:Static local:MenuDesignModel.Instance}"
                   ItemsSource="{Binding Items}"
                   Background="White">
 

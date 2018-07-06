@@ -6,7 +6,10 @@
   <SelectedLanguages />
   <InheritIgnoredWords>True</InheritIgnoredWords>
   <IgnoredWords>
+    <Ignore>deserialize</Ignore>
     <Ignore>prepend</Ignore>
+    <Ignore>username</Ignore>
+    <Ignore>Api</Ignore>
   </IgnoredWords>
   <InheritExclusionExpressions>True</InheritExclusionExpressions>
   <InheritIgnoredFilePatterns>True</InheritIgnoredFilePatterns>

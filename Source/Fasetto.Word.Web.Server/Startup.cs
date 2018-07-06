@@ -1,28 +1,43 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Dna;
+using Dna.AspNet;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Text;
 
 namespace Fasetto.Word.Web.Server
 {
+    /// <summary>
+    /// The startup class that handles constructing the ASP.Net server services
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// Main entry point for start of web server
+        /// </summary>
+        /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
-        }
 
-        public IConfiguration Configuration { get; }
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Add SendGrid email sender
+            services.AddSendGridEmailSender();
+
+            // Add general email template sender
+            services.AddEmailTemplateSender();
+
             // Add ApplicationDbContext to DI
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Framework.Construction.Configuration.GetConnectionString("DefaultConnection")));
 
             // AddIdentity adds cookie based authentication
             // Adds scoped classes for things like UserManager, SignInManager, PasswordHashers etc..
@@ -39,6 +54,34 @@ namespace Fasetto.Word.Web.Server
                 // forgot password links, phone number verification codes etc...
                 .AddDefaultTokenProviders();
 
+            // Add JWT Authentication for Api clients
+            services.AddAuthentication().
+                AddJwtBearer(options =>
+                {
+                    // Set validation parameters
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        // Validate issuer
+                        ValidateIssuer = true,
+                        // Validate audience
+                        ValidateAudience = true,
+                        // Validate expiration
+                        ValidateLifetime = true,
+                        // Validate signature
+                        ValidateIssuerSigningKey = true,
+
+                        // Set issuer
+                        ValidIssuer = Framework.Construction.Configuration["Jwt:Issuer"],
+                        // Set audience
+                        ValidAudience = Framework.Construction.Configuration["Jwt:Audience"],
+
+                        // Set signing key
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            // Get our secret key from configuration
+                            Encoding.UTF8.GetBytes(Framework.Construction.Configuration["Jwt:SecretKey"])),
+                    };
+                });
+
             // Change password policy
             services.Configure<IdentityOptions>(options =>
             {
@@ -48,6 +91,9 @@ namespace Fasetto.Word.Web.Server
                 options.Password.RequireLowercase = true;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
+
+                // Make sure users have unique emails
+                options.User.RequireUniqueEmail = true;
             });
 
             // Alter application cookie info
@@ -57,34 +103,47 @@ namespace Fasetto.Word.Web.Server
                 options.LoginPath = "/login";
 
                 // Change cookie timeout to expire in 15 seconds
-                options.ExpireTimeSpan = TimeSpan.FromSeconds(15);
+                options.ExpireTimeSpan = TimeSpan.FromSeconds(1500);
             });
 
-            services.AddMvc();
+            // Use MVC style website
+            services.AddMvc(options =>
+            {
+                //options.InputFormatters.Add(new XmlSerializerInputFormatter());
+                //options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
-            // Store instance of the DI service provider so our application can access it anywhere
-            IoCContainer.Provider = (ServiceProvider)serviceProvider;
-
+            // Use Dna Framework
+            app.UseDnaFramework();
+            
             // Setup Identity
             app.UseAuthentication();
 
+            // If in development...
             if (env.IsDevelopment())
+                // Show any exceptions in browser when they crash
                 app.UseDeveloperExceptionPage();
+            // Otherwise...
             else
+                // Just show generic error page
                 app.UseExceptionHandler("/Home/Error");
 
+            // Serve static files
             app.UseStaticFiles();
 
+            // Setup MVC routes
             app.UseMvc(routes =>
             {
+                // Default route of /controller/action/info
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{moreInfo?}");
 
+                // Set explicit about me page route
                 routes.MapRoute(
                     name: "aboutPage",
                     template: "more",

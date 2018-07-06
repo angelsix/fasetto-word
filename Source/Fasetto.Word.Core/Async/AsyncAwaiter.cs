@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Dna;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using static Dna.FrameworkDI;
 
 namespace Fasetto.Word.Core
 {
@@ -149,7 +151,7 @@ namespace Fasetto.Word.Core
 
                 // Log message to debug level 
                 // (may not be an issue but we don't want to miss anything in debug)
-                IoC.Logger.Log($"Crash in {nameof(AwaitAsync)}. {ex.Message}", LogLevel.Debug);
+                Logger.LogDebugSource($"Crash in {nameof(AwaitAsync)}. {ex.Message}");
 
                 // Break debugger
                 Debugger.Break();

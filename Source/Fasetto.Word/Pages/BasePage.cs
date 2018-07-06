@@ -1,10 +1,8 @@
-﻿using System.Windows.Controls;
-using System.Windows;
-using System.Threading.Tasks;
-using System.Windows.Media.Animation;
-using System;
-using Fasetto.Word.Core;
+﻿using Dna;
 using System.ComponentModel;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Fasetto.Word
 {
@@ -189,8 +187,13 @@ namespace Fasetto.Word
         /// </summary>
         public BasePage() : base()
         {
-            // Create a default view model
-            ViewModel = IoC.Get<VM>();
+            // If in design time mode...
+            if (DesignerProperties.GetIsInDesignMode(this))
+                // Just use a new instance of the VM
+                ViewModel = new VM();
+            else
+                // Create a default view model
+                ViewModel = Framework.Service<VM>() ?? new VM();
         }
 
         /// <summary>
@@ -203,8 +206,17 @@ namespace Fasetto.Word
             if (specificViewModel != null)
                 ViewModel = specificViewModel;
             else
-                // Create a default view model
-                ViewModel = IoC.Get<VM>();
+            {
+                // If in design time mode...
+                if (DesignerProperties.GetIsInDesignMode(this))
+                    // Just use a new instance of the VM
+                    ViewModel = new VM();
+                else
+                {
+                    // Create a default view model
+                    ViewModel = Framework.Service<VM>() ?? new VM();
+                }
+            }
         }
 
         #endregion

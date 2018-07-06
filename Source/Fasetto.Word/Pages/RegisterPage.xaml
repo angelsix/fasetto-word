@@ -1,4 +1,4 @@
-﻿<local:BasePage x:TypeArguments="core:RegisterViewModel" x:Class="Fasetto.Word.RegisterPage"
+﻿<local:BasePage x:TypeArguments="local:RegisterViewModel" x:Class="Fasetto.Word.RegisterPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -42,10 +42,15 @@
                                        Margin="0 0 0 20"
                                        />
 
+                            <!-- Username -->
+                            <TextBox 
+                                Text="{Binding Username}" 
+                                local:IsFocusedProperty.Value="True"
+                                Tag="Username" />
+
                             <!-- Email -->
                             <TextBox 
                                 Text="{Binding Email}" 
-                                local:IsFocusedProperty.Value="True"
                                 Tag="Email" />
 
                             <!-- Password -->
