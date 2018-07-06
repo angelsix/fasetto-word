@@ -84,8 +84,9 @@
                 <StackPanel Grid.Column="1"
                             local:TextEntryWidthMatcherProperty.Value="True"
                             >
-                    
-                    <local:TextEntryControl DataContext="{Binding Name}" />
+
+                    <local:TextEntryControl DataContext="{Binding FirstName}" />
+                    <local:TextEntryControl DataContext="{Binding LastName}" />
                     <local:TextEntryControl DataContext="{Binding Username}" />
                     <local:PasswordEntryControl DataContext="{Binding Password}" />
                     <local:TextEntryControl DataContext="{Binding Email}" />

@@ -23,7 +23,8 @@ namespace Fasetto.Word
         /// </summary>
         public SettingsDesignModel()
         {
-            Name = new TextEntryViewModel { Label = "Name", OriginalText = "Luke Malpass" };
+            FirstName = new TextEntryViewModel { Label = "Fist Name", OriginalText = "Luke" };
+            LastName = new TextEntryViewModel { Label = "Last Name", OriginalText = "Malpass" };
             Username = new TextEntryViewModel { Label = "Username", OriginalText = "luke" };
             Password = new PasswordEntryViewModel { Label = "Password", FakePassword = "********" };
             Email = new TextEntryViewModel { Label = "Email", OriginalText = "contact@angelsix.com" };
