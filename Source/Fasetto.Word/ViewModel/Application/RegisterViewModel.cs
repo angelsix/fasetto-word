@@ -68,7 +68,6 @@ namespace Fasetto.Word
             await RunCommandAsync(() => RegisterIsRunning, async () =>
             {
                 // Call the server and attempt to register with the provided credentials
-                // TODO: Move all URLs and API routes to static class in core
                 var result = await WebRequests.PostAsync<ApiResponse<RegisterResultApiModel>>(
                 // Set URL
                     RouteHelpers.GetAbsoluteRoute(ApiRoutes.Register),
