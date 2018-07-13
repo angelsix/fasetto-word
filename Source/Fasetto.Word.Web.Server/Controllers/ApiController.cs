@@ -67,7 +67,7 @@ namespace Fasetto.Word.Web.Server
         /// <param name="registerCredentials">The registration details</param>
         /// <returns>Returns the result of the register request</returns>
         [AllowAnonymous]
-        [Route("api/register")]
+        [Route(ApiRoutes.Register)]
         public async Task<ApiResponse<RegisterResultApiModel>> RegisterAsync([FromBody]RegisterCredentialsApiModel registerCredentials)
         {
             // TODO: Localize all strings
@@ -140,7 +140,7 @@ namespace Fasetto.Word.Web.Server
         /// </summary>
         /// <returns>Returns the result of the login request</returns>
         [AllowAnonymous]
-        [Route("api/login")]
+        [Route(ApiRoutes.Login)]
         public async Task<ApiResponse<UserProfileDetailsApiModel>> LogInAsync([FromBody]LoginCredentialsApiModel loginCredentials)
         {
             // TODO: Localize all strings
@@ -208,7 +208,7 @@ namespace Fasetto.Word.Web.Server
         }
 
         [AllowAnonymous]
-        [Route("api/verify/email/{userId}/{emailToken}")]
+        [Route(ApiRoutes.VerifyEmail)]
         [HttpGet]
         public async Task<ActionResult> VerifyEmailAsync(string userId, string emailToken)
         {
@@ -246,7 +246,7 @@ namespace Fasetto.Word.Web.Server
         /// Returns the users profile details based on the authenticated user
         /// </summary>
         /// <returns></returns>
-        [Route("api/user/profile")]
+        [Route(ApiRoutes.GetUserProfile)]
         public async Task<ApiResponse<UserProfileDetailsApiModel>> GetUserProfileAsync()
         {
             // Get user claims
@@ -283,7 +283,7 @@ namespace Fasetto.Word.Web.Server
         ///     Returns successful response if the update was successful, 
         ///     otherwise returns the error reasons for the failure
         /// </returns>
-        [Route("api/user/profile/update")]
+        [Route(ApiRoutes.UpdateUserProfile)]
         public async Task<ApiResponse> UpdateUserProfileAsync([FromBody]UpdateUserProfileApiModel model)
         {
             #region Declare Variables
@@ -351,9 +351,66 @@ namespace Fasetto.Word.Web.Server
             var result = await mUserManager.UpdateAsync(user);
 
             // If successful, send out email verification
-            if (result.Succeeded)
+            if (result.Succeeded && emailChanged)
                 // Send email verification
                 await SendUserEmailVerificationAsync(user);
+
+            #endregion
+
+            #region Respond
+
+            // If we were successful...
+            if (result.Succeeded)
+                // Return successful response
+                return new ApiResponse();
+            // Otherwise if it failed...
+            else
+                // Return the failed response
+                return new ApiResponse
+                {
+                    ErrorMessage = result.Errors.AggregateErrors()
+                };
+
+            #endregion
+        }
+
+        /// <summary>
+        /// Attempts to update the users password
+        /// </summary>
+        /// <param name="model">The user password details to update</param>
+        /// <returns>
+        ///     Returns successful response if the update was successful, 
+        ///     otherwise returns the error reasons for the failure
+        /// </returns>
+        [Route(ApiRoutes.UpdateUserPassword)]
+        public async Task<ApiResponse> UpdateUserPasswordAsync([FromBody]UpdateUserPasswordApiModel model)
+        {
+            #region Declare Variables
+
+            // Make a list of empty errors
+            var errors = new List<string>();
+
+            #endregion
+
+            #region Get User
+
+            // Get the current user
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            // If we have no user...
+            if (user == null)
+                return new ApiResponse
+                {
+                    // TODO: Localization
+                    ErrorMessage = "User not found"
+                };
+
+            #endregion
+
+            #region Update Password
+
+            // Attempt to commit changes to data store
+            var result = await mUserManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
 
             #endregion
 
