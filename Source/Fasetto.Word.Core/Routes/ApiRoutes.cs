@@ -19,11 +19,10 @@
         /// The route to the VerifyEmail Api method
         /// </summary>
         /// <remarks>
-        ///     Do a `string.Replace("{userId}", userId);` and
-        ///     `string.Replace("{emailToken}", emailToken);` 
-        ///     to provide the values via HttpGet
+        ///     Pass the userId and emailToken as get parameters.
+        ///     i.e. /api/verify/email?userId=...&emailToken=...
         /// </remarks>
-        public const string VerifyEmail = "api/verify/email/{userId}/{emailToken}";
+        public const string VerifyEmail = "api/verify/email";
 
         /// <summary>
         /// The route to the GetUserProfile Api method

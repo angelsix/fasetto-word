@@ -215,12 +215,6 @@ namespace Fasetto.Word.Web.Server
             // Get the user
             var user = await mUserManager.FindByIdAsync(userId);
 
-            // NOTE: Issue at the minute with Url Decoding that contains /'s does not replace them
-            //       https://github.com/aspnet/Home/issues/2669
-            //       
-            //       For now, manually fix that
-            emailToken = emailToken.Replace("%2f", "/").Replace("%2F", "/");
-
             // If the user is null
             if (user == null)
                 // TODO: Nice UI
@@ -447,7 +441,7 @@ namespace Fasetto.Word.Web.Server
             var emailVerificationCode = await mUserManager.GenerateEmailConfirmationTokenAsync(user);
 
             // TODO: Replace with APIRoutes that will contain the static routes to use
-            var confirmationUrl = $"http://{Request.Host.Value}/api/verify/email/{HttpUtility.UrlEncode(userIdentity.Id)}/{HttpUtility.UrlEncode(emailVerificationCode)}";
+            var confirmationUrl = $"http://{Request.Host.Value}/api/verify/email/?userId={HttpUtility.UrlEncode(userIdentity.Id)}&emailToken={HttpUtility.UrlEncode(emailVerificationCode)}";
 
             // Email the user the verification code
             await FasettoEmailSender.SendUserVerificationEmailAsync(user.UserName, userIdentity.Email, confirmationUrl);
