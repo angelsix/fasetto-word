@@ -6,6 +6,7 @@ using System.Windows.Input;
 using static Fasetto.Word.DI;
 using static Dna.FrameworkDI;
 using System.Linq.Expressions;
+using System.Diagnostics;
 
 namespace Fasetto.Word
 {
@@ -81,6 +82,16 @@ namespace Fasetto.Word
         /// Indicates if the password is current being changed
         /// </summary>
         public bool PasswordIsChanging { get; set; }
+
+        /// <summary>
+        /// Indicates if the settings details are currently being loaded
+        /// </summary>
+        public bool SettingsLoading { get; set; }
+
+        /// <summary>
+        /// Indicates if the user is currently logging out
+        /// </summary>
+        public bool LoggingOut { get; set; }
 
         #endregion
 
@@ -224,17 +235,21 @@ namespace Fasetto.Word
         /// </summary>
         public async Task LogoutAsync()
         {
-            // TODO: Confirm the user wants to logout
+            // Lock this command to ignore any other requests while processing
+            await RunCommandAsync(() => LoggingOut, async () =>
+            {
+                // TODO: Confirm the user wants to logout
 
-            // Clear any user data/cache
-            await ClientDataStore.ClearAllLoginCredentialsAsync();
+                // Clear any user data/cache
+                await ClientDataStore.ClearAllLoginCredentialsAsync();
 
-            // Clean all application level view models that contain
-            // any information about the current user
-            ClearUserData();
+                // Clean all application level view models that contain
+                // any information about the current user
+                ClearUserData();
 
-            // Go to login page
-            ViewModelApplication.GoToPage(ApplicationPage.Login);
+                // Go to login page
+                ViewModelApplication.GoToPage(ApplicationPage.Login);
+            });
         }
 
         /// <summary>
@@ -254,42 +269,50 @@ namespace Fasetto.Word
         /// </summary>
         public async Task LoadAsync()
         {
-            // Update values from local cache
-            await UpdateValuesFromLocalStoreAsync();
+            // Lock this command to ignore any other requests while processing
+            await RunCommandAsync(() => SettingsLoading, async () =>
+            {
+                // Update values from local cache
+                await UpdateValuesFromLocalStoreAsync();
 
-            // Get the user token
-            var token = (await ClientDataStore.GetLoginCredentialsAsync()).Token;
+                // Get the user token
+                var token = (await ClientDataStore.GetLoginCredentialsAsync()).Token;
 
-            // If we don't have a token (so we are not logged in...)
-            if (string.IsNullOrEmpty(token))
-                // Then do nothing more
-                return;
+                // If we don't have a token (so we are not logged in...)
+                if (string.IsNullOrEmpty(token))
+                    // Then do nothing more
+                    return;
 
-            // Load user profile details form server
-            var result = await WebRequests.PostAsync<ApiResponse<UserProfileDetailsApiModel>>(
-                // Set URL
-                RouteHelpers.GetAbsoluteRoute(ApiRoutes.GetUserProfile),
-                // Pass in user Token
-                bearerToken: token);
+                // Load user profile details form server
+                var result = await WebRequests.PostAsync<ApiResponse<UserProfileDetailsApiModel>>(
+                    // Set URL
+                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.GetUserProfile),
+                    // Pass in user Token
+                    bearerToken: token);
 
-            // If the response has an error...
-            if (await result.DisplayErrorIfFailedAsync("Load User Details Failed"))
-                // We are done
-                return;
+                // If the response has an error...
+                if (await result.DisplayErrorIfFailedAsync("Load User Details Failed"))
+                    // We are done
+                    return;
 
-            // TODO: Should we check if the values are different before saving?
+                // TODO: Should we check if the values are different before saving?
 
-            // Create data model from the response
-            var dataModel = result.ServerResponse.Response.ToLoginCredentialsDataModel();
+                // Create data model from the response
+                var dataModel = result.ServerResponse.Response.ToLoginCredentialsDataModel();
 
-            // Re-add our known token
-            dataModel.Token = token;
+                // Re-add our known token
+                dataModel.Token = token;
 
-            // Save the new information in the data store
-            await ClientDataStore.SaveLoginCredentialsAsync(dataModel);
+                Debug.WriteLine($"running");
 
-            // Update values from local cache
-            await UpdateValuesFromLocalStoreAsync();
+                // Save the new information in the data store
+                await ClientDataStore.SaveLoginCredentialsAsync(dataModel);
+
+                // Update values from local cache
+                await UpdateValuesFromLocalStoreAsync();
+
+                Debug.WriteLine($"done");
+            });
         }
 
         /// <summary>

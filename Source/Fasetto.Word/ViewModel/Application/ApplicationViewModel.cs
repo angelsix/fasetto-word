@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using static Fasetto.Word.DI;
 using static Fasetto.Word.Core.CoreDI;
+using System.Windows.Input;
 
 namespace Fasetto.Word
 {
@@ -62,7 +63,79 @@ namespace Fasetto.Word
             }
         }
 
+        /// <summary>
+        /// Determines the currently visible side menu content
+        /// </summary>
+        public SideMenuContent CurrentSideMenuContent { get; set; } = SideMenuContent.Chat;
+
         #endregion
+
+        #region Public Commands
+
+        /// <summary>
+        /// The command to change the side menu to the Chat
+        /// </summary>
+        public ICommand OpenChatCommand { get; set; }
+
+        /// <summary>
+        /// The command to change the side menu to the Contacts
+        /// </summary>
+        public ICommand OpenContactsCommand { get; set; }
+
+        /// <summary>
+        /// The command to change the side menu to Media
+        /// </summary>
+        public ICommand OpenMediaCommand { get; set; }
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// The default constructor
+        /// </summary>
+        public ApplicationViewModel()
+        {
+            // Create the commands
+            OpenChatCommand = new RelayCommand(OpenChat);
+            OpenContactsCommand = new RelayCommand(OpenContacts);
+            OpenMediaCommand = new RelayCommand(OpenMedia);
+        }
+
+        #endregion
+
+        #region Command Methods
+
+        /// <summary>
+        /// Changes the current side menu to the Chat
+        /// </summary>
+        public void OpenChat()
+        {
+            // Set the current side menu to Chat
+            CurrentSideMenuContent = SideMenuContent.Chat;
+        }
+
+        /// <summary>
+        /// Changes the current side menu to the Contacts
+        /// </summary>
+        public void OpenContacts()
+        {
+            // Set the current side menu to Chat
+            CurrentSideMenuContent = SideMenuContent.Contacts;
+        }
+
+        /// <summary>
+        /// Changes the current side menu to Media
+        /// </summary>
+        public void OpenMedia()
+        {
+            // Set the current side menu to Chat
+            CurrentSideMenuContent = SideMenuContent.Media;
+        }
+
+        #endregion
+
+        #region Public Helper Methods
 
         /// <summary>
         /// Navigates to the specified page
@@ -108,5 +181,7 @@ namespace Fasetto.Word
             // Go to chat page
             ViewModelApplication.GoToPage(ApplicationPage.Chat);
         }
+
+        #endregion
     }
 }

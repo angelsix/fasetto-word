@@ -163,13 +163,11 @@
 
             <!-- Side Menu -->
             <local:SideMenuControl 
+                DataContext="{Binding ApplicationViewModel, Source={x:Static local:ViewModelLocator.Instance}}"
                 Width="300" 
-                local:AnimateSlideInFromLeftProperty.Value="{Binding ApplicationViewModel.SideMenuVisible, 
-                                     Source={x:Static local:ViewModelLocator.Instance}}">
-
-                <local:ChatListControl />
-
-            </local:SideMenuControl>
+                local:AnimateSlideInFromLeftProperty.Value="{Binding SideMenuVisible}"
+                Content="{Binding CurrentSideMenuContent, Converter={local:SideMenuContentConverter}}"
+                />
 
         </Grid>
     </Border>

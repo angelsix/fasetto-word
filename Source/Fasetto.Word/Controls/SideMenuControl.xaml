@@ -33,9 +33,23 @@
 
                         <!-- Main buttons -->
                         <StackPanel Orientation="Horizontal">
-                            <Button Style="{StaticResource IconButton}" Content="{StaticResource FontAwesomeChatIcon}" />
-                            <Button Style="{StaticResource IconButton}" Content="{StaticResource FontAwesomeUserIcon}" />
-                            <Button Style="{StaticResource IconButton}" Content="{StaticResource FontAwesomePictureIcon}" />
+                            <Button 
+                                Style="{StaticResource IconButton}" 
+                                Content="{StaticResource FontAwesomeChatIcon}"
+                                Command="{Binding OpenChatCommand}"
+                                />
+                            
+                            <Button
+                                Style="{StaticResource IconButton}"
+                                Content="{StaticResource FontAwesomeUserIcon}" 
+                                Command="{Binding OpenContactsCommand}"
+                                />
+                            
+                            <Button 
+                                Style="{StaticResource IconButton}" 
+                                Content="{StaticResource FontAwesomePictureIcon}" 
+                                Command="{Binding OpenMediaCommand}"
+                                />
                         </StackPanel>
 
                         <!-- Settings button -->
