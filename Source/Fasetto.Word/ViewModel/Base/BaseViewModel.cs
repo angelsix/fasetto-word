@@ -11,6 +11,16 @@ namespace Fasetto.Word
     /// </summary>
     public class BaseViewModel : INotifyPropertyChanged
     {
+        #region Protected Members
+
+        /// <summary>
+        /// A global lock for property checks so prevent locking on different instances of expressions.
+        /// Considering how fast this check will always be it isn't an issue to globally lock all callers.
+        /// </summary>
+        protected object mPropertyValueCheckLock = new object();
+
+        #endregion
+
         /// <summary>
         /// The event that is fired when any child property changes its value
         /// </summary>
@@ -39,7 +49,7 @@ namespace Fasetto.Word
         protected async Task RunCommandAsync(Expression<Func<bool>> updatingFlag, Func<Task> action)
         {
             // Lock to ensure single access to check
-            lock (updatingFlag)
+            lock (mPropertyValueCheckLock)
             {
                 // Check if the flag property is true (meaning the function is already running)
                 if (updatingFlag.GetPropertyValue())
@@ -74,7 +84,7 @@ namespace Fasetto.Word
         protected async Task<T> RunCommandAsync<T>(Expression<Func<bool>> updatingFlag, Func<Task<T>> action, T defaultValue = default(T))
         {
             // Lock to ensure single access to check
-            lock (updatingFlag)
+            lock (mPropertyValueCheckLock)
             {
                 // Check if the flag property is true (meaning the function is already running)
                 if (updatingFlag.GetPropertyValue())
