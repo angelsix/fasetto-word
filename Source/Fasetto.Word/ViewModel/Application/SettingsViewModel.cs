@@ -272,11 +272,14 @@ namespace Fasetto.Word
             // Lock this command to ignore any other requests while processing
             await RunCommandAsync(() => SettingsLoading, async () =>
             {
+                // Store single transcient instance of client data store
+                var scopedClientDataStore = ClientDataStore;
+
                 // Update values from local cache
                 await UpdateValuesFromLocalStoreAsync();
 
                 // Get the user token
-                var token = (await ClientDataStore.GetLoginCredentialsAsync()).Token;
+                var token = (await scopedClientDataStore.GetLoginCredentialsAsync()).Token;
 
                 // If we don't have a token (so we are not logged in...)
                 if (string.IsNullOrEmpty(token))
@@ -306,7 +309,7 @@ namespace Fasetto.Word
                 Debug.WriteLine($"running");
 
                 // Save the new information in the data store
-                await ClientDataStore.SaveLoginCredentialsAsync(dataModel);
+                await scopedClientDataStore.SaveLoginCredentialsAsync(dataModel);
 
                 // Update values from local cache
                 await UpdateValuesFromLocalStoreAsync();
