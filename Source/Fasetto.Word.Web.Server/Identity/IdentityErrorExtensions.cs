@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Fasetto.Word.Web
+namespace Fasetto.Word.Web.Server
 {
     /// <summary>
     /// Extension methods for <see cref="IdentityError"/> class

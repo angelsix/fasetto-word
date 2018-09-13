@@ -5,6 +5,8 @@
     /// </summary>
     public static class ApiRoutes
     {
+        #region Login / Register
+
         /// <summary>
         /// The route to the Register Api method
         /// </summary>
@@ -24,6 +26,10 @@
         /// </remarks>
         public const string VerifyEmail = "api/verify/email";
 
+        #endregion
+
+        #region User Profile
+
         /// <summary>
         /// The route to the GetUserProfile Api method
         /// </summary>
@@ -38,6 +44,16 @@
         /// The route to the UpdateUserPassword Api method
         /// </summary>
         public const string UpdateUserPassword = "api/user/password/update";
-    }
 
+        #endregion
+
+        #region Contacts
+
+        /// <summary>
+        /// The route to the SearchUsers Api method
+        /// </summary>
+        public const string SearchUsers = "api/users/search";
+
+        #endregion
+    }
 }

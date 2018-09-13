@@ -177,6 +177,9 @@ namespace Fasetto.Word.Web.Server
                     template: "more",
                     defaults: new { controller = "About", action = "TellMeMore" });
             });
+
+            // Make sure we have the database
+            serviceProvider.GetService<ApplicationDbContext>().Database.EnsureCreated();
         }
     }
 }

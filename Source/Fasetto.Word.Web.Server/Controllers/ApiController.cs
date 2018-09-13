@@ -236,6 +236,8 @@ namespace Fasetto.Word.Web.Server
 
         #endregion
 
+        #region User Profile
+
         /// <summary>
         /// Returns the users profile details based on the authenticated user
         /// </summary>
@@ -424,6 +426,149 @@ namespace Fasetto.Word.Web.Server
 
             #endregion
         }
+
+        #endregion
+
+        #region Contacts
+
+        /// <summary>
+        /// Searches all users for any users that match the search credentials
+        /// </summary>
+        /// <param name="model">The search credentials</param>
+        /// <returns>
+        ///     Returns a list of found contact details if successful, 
+        ///     otherwise returns the error reasons for the failure
+        /// </returns>
+        [Route(ApiRoutes.SearchUsers)]
+        public async Task<ApiResponse<SearchUsersResultsApiModel>> SearchUsersAsync([FromBody]SearchUsersApiModel model)
+        {
+            #region Get User
+
+            // Get the current user
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            // If we have no user...
+            if (user == null)
+                return new ApiResponse<SearchUsersResultsApiModel>
+                {
+                    // TODO: Localization
+                    ErrorMessage = "User not found"
+                };
+
+            #endregion
+
+            #region Check Valid Search Credentials
+
+            // Check if the user provided both a first and last name
+            var firstOrLastNameMissing = string.IsNullOrEmpty(model?.FirstName) || string.IsNullOrEmpty(model?.LastName);
+
+            // Check if enough details are provided for a search
+            var notEnoughSearchDetails =
+                // First and last name
+                firstOrLastNameMissing &&
+                // Username
+                string.IsNullOrEmpty(model?.Username) &&
+                // Phone number
+                string.IsNullOrEmpty(model?.PhoneNumber) &&
+                // Email
+                string.IsNullOrEmpty(model?.Email);
+
+            // If we don't have enough details for a search...
+            if (notEnoughSearchDetails)
+                // Return error
+                return new ApiResponse<SearchUsersResultsApiModel>
+                {
+                    // TODO: Localization
+                    ErrorMessage = "Please provide a first and last name, or an email, username or phone number"
+                };
+
+            #endregion
+
+            #region Find Users
+
+            // Create a found user variable
+            var foundUser = default(ApplicationUser);
+
+            // If we have a username...
+            if (!string.IsNullOrEmpty(model.Username))
+                // Find the user by username
+                foundUser = await mUserManager.FindByNameAsync(model.Username);
+
+            // If we have an email...
+            if (foundUser == null && !string.IsNullOrEmpty(model.Email))
+                // Find the user by email
+                foundUser = await mUserManager.FindByEmailAsync(model.Email);
+
+            // If we have a phone number...
+            if (foundUser == null && !string.IsNullOrEmpty(model.PhoneNumber))
+            {
+                // Find the user by phone number
+                foundUser = mUserManager.Users.FirstOrDefault(u => 
+                                // Phone number is confirmed
+                                u.PhoneNumberConfirmed &&
+                                // Phone number must match exactly 
+                                // including country code if provided
+                                u.PhoneNumber == model.PhoneNumber);
+            }
+
+            // If we found a user...
+            if (foundUser != null)
+            {
+                // Return that users details
+                return new ApiResponse<SearchUsersResultsApiModel>
+                {
+                    Response = new SearchUsersResultsApiModel
+                        {
+                            new SearchUsersResultApiModel
+                            {
+                                Username = foundUser.UserName,
+                                FirstName = foundUser.FirstName,
+                                LastName = foundUser.LastName
+                            }
+                        }
+                };
+            }
+
+            // Create a new list of results
+            var results = new SearchUsersResultsApiModel();
+
+            // If we have a first and last name...
+            if (!firstOrLastNameMissing)
+            {
+                // Search for users...
+                var foundUsers = mUserManager.Users.Where(u =>
+                                    // With the same first name
+                                    u.FirstName == model.FirstName &&
+                                    // And same last name
+                                    u.LastName == model.LastName)
+                                    // And for now, limit to 100 results
+                                    // TODO: Add pagination
+                                    .Take(100);
+
+                // If we found any users...
+                if (foundUsers.Any())
+                {
+                    // Add each users details
+                    results.AddRange(foundUsers.Select(u => new SearchUsersResultApiModel
+                    {
+                        Username = u.UserName,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName
+                    }));
+                }
+            }
+
+            // Return the results
+            return new ApiResponse<SearchUsersResultsApiModel>
+            {
+                Response = results
+            };
+
+            #endregion
+        }
+
+
+        #endregion
 
         #region Private Helpers
 
