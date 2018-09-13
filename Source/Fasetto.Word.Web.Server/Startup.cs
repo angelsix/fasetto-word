@@ -2,7 +2,9 @@
 using Dna.AspNet;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +31,15 @@ namespace Fasetto.Word.Web.Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Add proper cookie request to follow GDPR 
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for 
+                // non-essential cookies is needed for a given request
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
             // Add SendGrid email sender
             services.AddSendGridEmailSender();
 
@@ -111,7 +122,9 @@ namespace Fasetto.Word.Web.Server
             {
                 //options.InputFormatters.Add(new XmlSerializerInputFormatter());
                 //options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
-            });
+            })
+            // State we are a minimum compatibility of 2.1 onwards
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1); ;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -125,12 +138,27 @@ namespace Fasetto.Word.Web.Server
 
             // If in development...
             if (env.IsDevelopment())
+            {
                 // Show any exceptions in browser when they crash
                 app.UseDeveloperExceptionPage();
+            }
             // Otherwise...
             else
+            {
                 // Just show generic error page
                 app.UseExceptionHandler("/Home/Error");
+
+                // In production, tell the browsers (via the HSTS header)
+                // to only try and access our site via HTTPS, not HTTP
+                app.UseHsts();
+            }
+
+            // Redirect all calls from HTTP to HTTPS
+            app.UseHttpsRedirection();
+
+            // Force non-essential cookies to only store
+            // if the user has consented
+            app.UseCookiePolicy();
 
             // Serve static files
             app.UseStaticFiles();
