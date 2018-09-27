@@ -78,7 +78,7 @@ namespace Fasetto.Word
             // Create a new endpoint watcher
             var httpWatcher = new HttpEndpointChecker(
                 // Checking fasetto.chat
-                "http://fasetto.chat",
+                Configuration["FasettoWordServer:HostUrl"],
                 // Every 20 seconds
                 interval: 20000,
                 // Pass in the DI logger
