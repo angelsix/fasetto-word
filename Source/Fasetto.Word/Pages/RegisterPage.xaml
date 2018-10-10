@@ -44,13 +44,13 @@
 
                             <!-- Username -->
                             <TextBox 
-                                Text="{Binding Username}" 
+                                Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" 
                                 local:IsFocusedProperty.Value="True"
                                 Tag="Username" />
 
                             <!-- Email -->
                             <TextBox 
-                                Text="{Binding Email}" 
+                                Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" 
                                 Tag="Email" />
 
                             <!-- Password -->
