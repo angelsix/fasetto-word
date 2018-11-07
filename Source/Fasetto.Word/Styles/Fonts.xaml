@@ -5,7 +5,7 @@
 
     <FontFamily x:Key="LatoThin">pack://application;,,,/Fonts/#Lato Thin</FontFamily>
     <FontFamily x:Key="LatoRegular">pack://application;,,,/Fonts/#Lato Regular</FontFamily>
-    <FontFamily x:Key="LatoBold">pack://application;,,,/Fonts/#Lato Bold</FontFamily>
+    <FontFamily x:Key="LatoBold">pack://application;,,,/Fonts/#Lato Black</FontFamily>
     <FontFamily x:Key="FontAwesome">pack://application;,,,/Fonts/#FontAwesome</FontFamily>
 
     <Style TargetType="{x:Type Control}" x:Key="BaseStyle">
