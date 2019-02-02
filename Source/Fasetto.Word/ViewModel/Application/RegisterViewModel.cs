@@ -80,7 +80,7 @@ namespace Fasetto.Word
                     });
 
                 // If the response has an error...
-                if (await result.DisplayErrorIfFailedAsync("Register Failed"))
+                if (await result.HandleErrorIfFailedAsync("Register Failed"))
                     // We are done
                     return;
 

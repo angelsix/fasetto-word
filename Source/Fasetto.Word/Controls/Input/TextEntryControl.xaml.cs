@@ -53,7 +53,11 @@ namespace Fasetto.Word
                 // Set the column definition width to the new value
                 (d as TextEntryControl).LabelColumnDefinition.Width = (GridLength)e.NewValue;
             }
+
+// Making ex available for developer on break
+#pragma warning disable CS0168
             catch (Exception ex)
+#pragma warning restore CS0168
             {
                 // Make developer aware of potential issue
                 Debugger.Break();
