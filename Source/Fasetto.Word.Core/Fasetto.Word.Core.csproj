@@ -5,13 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dna.Framework" Version="1.0.7.9" />
-    <PackageReference Include="Fody" Version="3.2.4">
+    <PackageReference Include="Dna.Framework" Version="1.0.7.11" />
+    <PackageReference Include="Fody" Version="3.3.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="PropertyChanged.Fody" Version="2.5.11" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="PropertyChanged.Fody" Version="2.6.0" />
   </ItemGroup>
 
 </Project>
