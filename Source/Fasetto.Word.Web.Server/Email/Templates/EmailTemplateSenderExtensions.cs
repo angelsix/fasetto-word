@@ -16,7 +16,7 @@ namespace Fasetto.Word.Web.Server
         /// <returns></returns>
         public static IServiceCollection AddEmailTemplateSender(this IServiceCollection services)
         {
-            // Inject the SendGridEmailSender
+            // Inject the EmailTemplateSender
             services.AddTransient<IEmailTemplateSender, EmailTemplateSender>();
 
             // Return collection for chaining
