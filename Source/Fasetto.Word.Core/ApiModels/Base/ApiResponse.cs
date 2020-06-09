@@ -20,6 +20,7 @@
         /// <summary>
         /// The API response object
         /// </summary>
+        [JsonPropertyName("ResponseJSONPropertyName")]
         public object Response { get; set; }
 
         #endregion
