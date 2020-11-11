@@ -117,7 +117,7 @@ namespace Fasetto.Word
                     // Let caller know we finished
                     tcs.TrySetResult(true);
                 }
-            });
+            }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
 
             return tcs.Task;
         }
