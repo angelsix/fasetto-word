@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dna.Framework.AspNet" Version="1.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.4" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.15" />
     <PackageReference Include="Sendgrid" Version="9.10.0" />
   </ItemGroup>
 
